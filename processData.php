@@ -47,6 +47,7 @@
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
+
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
@@ -59,10 +60,14 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <img src="img/ctis_2017.png" style="height: max-width: 80px; max-height: 80px;" align="right"> </img>
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="processData.php">Overlay Tester Analysis Tool</a>
-                    </li><!--
+                        <a href="processData.php" style="font-weight: bold;">Overlay Tester Analysis Tool</a>
+                    </li>
+
+
+                    <!--
                     <li>
                         <a href="#">Services</a>
                     </li>xaxes: [{
@@ -248,8 +253,11 @@
                     </select><br>
                     <!-- Performance -->
                     <div id="chart3" style="height: 600px;">
+                      <div id="chart3_prepend">hey</div> <br>
                       <br>
+
                       <div class="col-md-11 col-md-offset-1">
+
                     		<div id="chart3_content" style="height: 500px;"></div><br><br><br>
                     	</div>
 
@@ -491,7 +499,7 @@
 	        				            ]
 	        				        }
 	        					});
-	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content')); //have to prependTo
+	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_prepend')); //have to prependTo
 	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>").html("Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($('#chart3_content'));
 		          	}
 		          });
