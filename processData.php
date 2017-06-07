@@ -241,7 +241,7 @@
                   }
                   ?>
                     <select autocomplete="off" class="form-control" id="table_select">
-                      <option value="#chart3">Design Interaction Plot</option>
+                      <option value="#chart3">OT Interaction Plot</option> <!-- Cambio -->
                       <option value="#chart">Crack Initiation</option>
                       <option value="#chart2">Crack Propagation</option>
                       <option value="#chart4">Top LVDT</option>
@@ -491,7 +491,7 @@
 	        				            ]
 	        				        }
 	        					});
-	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content'));
+	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content')); //have to prependTo
 	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>").html("Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($('#chart3_content'));
 		          	}
 		          });
