@@ -59,12 +59,14 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <a href="http://ctis.utep.edu">
+              <a target="_blank" href="http://ctis.utep.edu">
                 <img src="img/ctis_transparent_white_2017.png" style="height: max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
               </a>
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="processData.php" style=" font-size: 18px; font-weight: bold;">Overlay Tester Analysis Tool</a>
+                        <a href="processData.php" style=" font-size: 16px; font-weight: bold;">Overlay Tester Analysis Tool v1.2</a> <!-- <a style="padding-top: 0px; padding-bottom: 0px;"> V1.0 </a> -->
+                        <!-- <a> hey </a> -->
+                        <!-- note: version 1.2 as of Wednesday, June 7th  -->
                     </li>
 
 
