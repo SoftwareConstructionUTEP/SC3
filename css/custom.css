@@ -5,11 +5,10 @@
 }
 
 .xaxisLabel {
-    bottom: -60px;
-    font-weight: bold;
-    left: 0;
-    right: 0;
-    font-size: 22px;
+		bottom: 485px;
+	 	font-weight: bold;
+ 		right: 220px;
+	 	font-size: 22px;
 }
 
 .yaxisLabel {

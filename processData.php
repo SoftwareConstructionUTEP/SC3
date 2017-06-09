@@ -64,7 +64,7 @@
               </a>
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="processData.php" style="font-weight: bold;">Overlay Tester Analysis Tool</a>
+                        <a href="processData.php" style=" font-size: 18px; font-weight: bold;">Overlay Tester Analysis Tool</a>
                     </li>
 
 
@@ -257,8 +257,8 @@
                     <div id="chart3" style="height: 600px;">
                       <!--<div id="chart3_prepend">hey</div> <br>-->
                       <div class="col-md-11 col-md-offset-1">
-                        <div> <strong>Disclaimer:</strong> The Critical Fracture Energy (CFE) and the Crack Progression Rate (CPR) are the performance-based parameters from the overlay test that characterize the cracking susceptibility of asphalt mixtures.  Please utilize these parameters when characterizing the performance of asphalt mixtures and carrying out statistical calculations such as standard deviation and coefficient of variation. The Crack Resistance Index (CRI) is specified only for quality control and acceptance practices.  The CRI index is translated from the Crack Progression Rate.  The CRI shall not be used for statistical calculations. </div> <br>
-                    		<div id="chart3_content" style="height: 500px;"></div><br><br><br>
+                        <div> <strong>Disclaimer:</strong> The Critical Fracture Energy (CFE) and the Crack Progression Rate (CPR) are the performance-based parameters from the overlay test that characterize the cracking susceptibility of asphalt mixtures.  Please utilize these parameters when characterizing the performance of asphalt mixtures and carrying out statistical calculations such as standard deviation and coefficient of variation. The Crack Resistance Index (CRI) is specified only for quality control and acceptance practices.  The CRI index is translated from the Crack Progression Rate.  The CRI shall not be used for statistical calculations. </div> <br> <br>
+                    		<div id="chart3_content" style="height: 500px;"></div><br>
                     	</div>
 
                       <div class="col-lg-8 col-lg-offset-2">
@@ -359,7 +359,7 @@
 							        arr.push({data: $.map(n, function(m, j){return [[j,m]]}), label: 'Raw Data #'+(i+1)}, {data: $.map(n, function(m, j){return [[j,Math.pow(j, -coeff)]]}), label: 'Calculated Load'});
 	                    return arr;
 	                  });
-	                  console.log(normLoad);
+	                  //console.log(normLoad);
 						var firstAndSecond = [];
 						for(var i = 0; i < data.firstCycle.length; i++){
 							firstAndSecond.push({'data': data.firstCycle[i], 'label': "First Loop #" + (i+1), 'color':colors[i][0]});
@@ -367,7 +367,7 @@
 						for(var i = 0; i < data.secondCycle.length; i++){
 							firstAndSecond.push({'data': data.secondCycle[i], 'label': "Second Loop #" + (i+1), 'color':colors[i][1]});
 						}
-	                  console.log(firstAndSecond)
+	                  //console.log(firstAndSecond)
 						var sp = [];
 						var tmparr1 = [];
 						var tmparr2 = [];
@@ -388,7 +388,7 @@
 		                  for(var i = 0; i < data.repetitions; i++){
 		                    series.push({'data':data.disptime[i], 'color':colors[i][0], 'label':'Displacement #' + (i+1)});
 		                  }
-		                  console.log(series);
+		                  //console.log(series);
 		                  $.plot($("#chart4"), series, {
 				                	  yaxis:{tickDecimals:2},
 				                      xaxes: [{
@@ -467,18 +467,22 @@
 	        					});
 	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>").text("Displacement, in.").appendTo($('#chart'));
 	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text("Load (lbs)").appendTo($('#chart'));
-                    console.log("test")
-                    console.log(sp);
+                    //console.log("test")
+                    //console.log(sp);
 	        					var plot = $.plot('#chart3_content', sp, {
-	        				        xaxes: [{
+	        				        xaxes: [
+                            {
+                              position: "bottom",
 	        				            max: 100,
 	        				            min: 0,
-	        				            font:{
-	        				            	size:22,
-	        				            	weight:"bold",
-	        				            	color: 'black'
-	        				            }
-	        				        }],
+	        				            font:{ size:22, weight:"bold", color: 'black'}
+                            }/*,{
+                              position: "bottom",
+	        				            max: 100,
+	        				            min: 0,
+	        				            font:{ size:22, weight:"bold", color: 'black'}
+                            }*/
+                            ],
 	        				        yaxes: [{
 	        				            min: 0,
 	        				            max: 4,
