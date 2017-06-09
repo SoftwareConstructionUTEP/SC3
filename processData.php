@@ -160,10 +160,10 @@
                   <input class="form-control" type="text" id="date" name="date" readonly>
 
 
-                  <hr style="border-color:#337ab7; border-width:5px; border-radius:25px;">
+                  <hr style="border-color:#337ab7; border-width:1px; border-radius:25px;">
 
                   <label>Source data</label>
-                  <input class="form-control-file" type="file" id="rawData" name="rawData[]" required multiple>
+                  <input class="form-control-file" type="file" id="rawData" name="rawData[]" required multiple> <br>
 
                   <label id="peaks_label">Peaks (CSV)</label>
                   <input class="form-control" type="file" id="peaks" name="peaks" required multiple>
@@ -232,7 +232,7 @@
 
           	</div>
             <div class="col-lg-12">
-              <div class="panel panel-primary">
+              <div class="panel panel-primary" style="border: none; -webkit-box-shadow: none; box-shadow: none;">
                 <div class="panel-heading">
                   <h3 class="panel-title"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Charts</h3>
                 </div>
