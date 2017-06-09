@@ -59,7 +59,9 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <img src="img/ctis_transparent_2017.png" style="height: max-width: 80px; max-height: 80px;" align="right"> </img>
+              <a href="http://ctis.utep.edu">
+                <img src="img/ctis_transparent_white_2017.png" style="height: max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
+              </a>
                 <ul class="nav navbar-nav">
                     <li>
                         <a href="processData.php" style="font-weight: bold;">Overlay Tester Analysis Tool</a>
