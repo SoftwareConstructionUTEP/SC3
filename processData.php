@@ -328,6 +328,7 @@
     		$('#chart_area').hide();
     		$("#otForm").on("submit", function(e) {
 		      var data = new FormData($('form')[0]);
+          console.log(data);
 		      data.append('submit', true);
 		          e.preventDefault();
 		          $.ajax({
@@ -354,7 +355,7 @@
 		              	var norm = data.normLoads;
 		              	var fenergy = data.fenergy[i];
 	                  var coeff = data.coeff[i];
-
+                    console.log(data);
 	                  //format the data for plots
 		                var normLoad = $.map(norm, function(n,i){ //crack propagation
 							        var arr = [];
@@ -362,6 +363,7 @@
 	                    return arr;
 	                  });
 	                  //console.log(normLoad);
+                    console.log(data);
 						var firstAndSecond = [];
 						for(var i = 0; i < data.firstCycle.length; i++){
 							firstAndSecond.push({'data': data.firstCycle[i], 'label': "First Loop #" + (i+1), 'color':colors[i][0]}); // crack initiation
@@ -425,7 +427,7 @@
 				                });
 	                  }
 	        					//plot the charts
-	        					console.log($('#chart2'));
+	        					//console.log($('#chart2'));
 	        					$.plot('#chart2', normLoad, {
 	        			        yaxis: { min:0, max:1.0 },
 	        						yaxes: [{
