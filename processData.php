@@ -64,7 +64,7 @@
               </a>
                 <ul class="nav navbar-nav">
                     <li>
-                        <a href="processData.php" style=" font-size: 16px; font-weight: bold;">Overlay Tester Analysis Tool v1.2</a> <!-- <a style="padding-top: 0px; padding-bottom: 0px;"> V1.0 </a> -->
+                        <a href="processData.php" style=" font-size: 16px; font-weight: bold;">Overlay Tester Analysis Tool v1.2 (06/07/17)</a> <!-- <a style="padding-top: 0px; padding-bottom: 0px;"> V1.0 </a> -->
                         <!-- <a> hey </a> -->
                         <!-- note: version 1.2 as of Wednesday, June 7th  -->
                     </li>
@@ -192,7 +192,7 @@
                     <!-- <th>Specimen</th> -->
                     <th>Max Load, lbs</th>
                     <!-- <th>Fracture Area, lbs/in</th> -->
-                    <th>Fracture Energy, lbs in / in <sup>2</sup></th>
+                    <!--<th>Critical Fracture Energy</th> --> <th>Critical Fracture Energy, lbs in / in <sup>2</sup></th>
                     <th>Crack progression rate</th>
                     <!-- <th>R2</th> -->
                     <th>Number of Cycles</th>
@@ -474,7 +474,7 @@
 	        					var plot = $.plot('#chart3_content', sp, {
 	        				        xaxes: [
                             {
-                              position: "bottom",
+                              position: "top",
 	        				            max: 100,
 	        				            min: 0,
 	        				            font:{ size:22, weight:"bold", color: 'black'}
@@ -501,12 +501,18 @@
 	        				                {xaxis: {from:  70, to: 100}, color: "rgb(104, 185, 67)", lineWidth: 2},//green
 	        				                {xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
                                   {xaxis: {from:  70, to: 70}, color: "red", lineWidth: 5},//vertical line
-	        				                {xaxis: {from:  0, to: 30}, color: "rgb(199, 96, 86)", lineWidth: 2}//red
-	        				            ]
+	        				                {xaxis: {from:  0, to: 30}, color: "rgb(199, 96, 86)", lineWidth: 2},//red
+                                  {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 2},
+                                  {xaxis: {from: 0, to: 100}, yaxis: {from: 3, to: 3}, color: "black", lineWidth: 2}
+	        				            ],
+                              /*markingsStyle: 'solid',
+  	        				            markings: [
+                                    {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 5}
+  	        				            ]*/
 	        				        }
 	        					});
 	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content')); //have to prependTo
-	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>").html("Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($('#chart3_content'));
+	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>").html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($('#chart3_content'));
 		          	}
 		          });
 		      });
