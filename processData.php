@@ -193,7 +193,7 @@
                     <th>Max Load, lbs</th>
                     <!-- <th>Fracture Area, lbs/in</th> -->
                     <!--<th>Critical Fracture Energy</th> --> <th>Critical Fracture Energy, lbs in / in <sup>2</sup></th>
-                    <th>Crack progression rate</th>
+                    <th>Crack Progression Rate</th>
                     <!-- <th>R2</th> -->
                     <th>Number of Cycles</th>
                   </thead>
@@ -260,7 +260,7 @@
                       <!--<div id="chart3_prepend">hey</div> <br>-->
                       <div class="col-md-11 col-md-offset-1">
                         <div> <strong>Disclaimer:</strong> The Critical Fracture Energy (CFE) and the Crack Progression Rate (CPR) are the performance-based parameters from the overlay test that characterize the cracking susceptibility of asphalt mixtures.  Please utilize these parameters when characterizing the performance of asphalt mixtures and carrying out statistical calculations such as standard deviation and coefficient of variation. The Crack Resistance Index (CRI) is specified only for quality control and acceptance practices.  The CRI index is translated from the Crack Progression Rate.  The CRI shall not be used for statistical calculations. </div> <br> <br>
-                    		<div id="chart3_content" style="height: 500px;"></div><br>
+                    		<div id="chart3_content" style="height: 500px;"> </div> <br> <br> <br>
                     	</div>
 
                       <div class="col-lg-8 col-lg-offset-2">
@@ -322,7 +322,7 @@
     	}
     });
     //global var for colors of lines
-    var colors =[['rgb(0, 148, 255)', 'rgb(130, 174, 255)'], ['#A1D490', '#B2E6A1'], ['#CD88E3', '#D599E8'], ['#DEA96D', '#FCD2A2'], ['#E83186', '#F071AC']];
+    var colors =[['#000000','000000'], ['rgb(0, 148, 255)', 'rgb(130, 174, 255)'], ['#A1D490', '#B2E6A1'], ['#CD88E3', '#D599E8'], ['#DEA96D', '#FCD2A2'], ['#E83186', '#F071AC']];
 
     	$(document).ready(function(){
     		$('#chart_area').hide();
@@ -356,7 +356,7 @@
 	                  var coeff = data.coeff[i];
 
 	                  //format the data for plots
-		                var normLoad = $.map(norm, function(n,i){
+		                var normLoad = $.map(norm, function(n,i){ //crack propagation
 							        var arr = [];
 							        arr.push({data: $.map(n, function(m, j){return [[j,m]]}), label: 'Raw Data #'+(i+1)}, {data: $.map(n, function(m, j){return [[j,Math.pow(j, -coeff)]]}), label: 'Calculated Load'});
 	                    return arr;
@@ -364,10 +364,10 @@
 	                  //console.log(normLoad);
 						var firstAndSecond = [];
 						for(var i = 0; i < data.firstCycle.length; i++){
-							firstAndSecond.push({'data': data.firstCycle[i], 'label': "First Loop #" + (i+1), 'color':colors[i][0]});
+							firstAndSecond.push({'data': data.firstCycle[i], 'label': "First Loop #" + (i+1), 'color':colors[i][0]}); // crack initiation
 						}
 						for(var i = 0; i < data.secondCycle.length; i++){
-							firstAndSecond.push({'data': data.secondCycle[i], 'label': "Second Loop #" + (i+1), 'color':colors[i][1]});
+							firstAndSecond.push({'data': data.secondCycle[i], 'label': "Second Loop #" + (i+1), 'color':colors[i][1]}); // crack initiation
 						}
 	                  //console.log(firstAndSecond)
 						var sp = [];
@@ -382,9 +382,9 @@
 						sp.push({'data':tmparr1, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
 						sp.push({'data':tmparr2, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
 						for(var i = 0; i < data.repetitions; i++){
-							sp.push({'data':[[(-(data.coeff[i]*133.333)+133.333), data.fenergy[i]]], 'label': "Specimen #" + (i+1), 'color': 'black', 'points':{'show':true,'radius':8,'fillColor':colors[i][0],'symbol':'circle'}});
-						}
-	                  console.log(sp);
+							sp.push({'data':[[(-(data.coeff[i]*133.333)+133.333), data.fenergy[i]]], 'label': "Color of Specimen #" + (i+1), 'color': 'black', 'points':{'show':true,'radius':8,'fillColor':colors[i][0],'symbol':'circle'}});
+						} //specimen fill color is hardcoded to 'black'
+	                  //console.log(sp);
 	                  if(data.hasOwnProperty('disptime')){
 	                  	var series = [];
 		                  for(var i = 0; i < data.repetitions; i++){
@@ -467,23 +467,30 @@
 	        						          position: 'se'
 	        							        }
 	        					});
-	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>").text("Displacement, in.").appendTo($('#chart'));
+	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>").text("Displacement, in.").appendTo($('#chart')); //more space between this and graph, use css
 	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text("Load (lbs)").appendTo($('#chart'));
                     //console.log("test")
                     //console.log(sp);
 	        					var plot = $.plot('#chart3_content', sp, {
+                      /*[
+                        {
+                          data: data,
+                          xaxis: 1
+                        },
+                        {
+                          data: data,
+                          xaxis: 2
+                        }
+                    ],*/
 	        				        xaxes: [
                             {
                               position: "top",
 	        				            max: 100,
 	        				            min: 0,
 	        				            font:{ size:22, weight:"bold", color: 'black'}
-                            }/*,{
-                              position: "bottom",
-	        				            max: 100,
-	        				            min: 0,
-	        				            font:{ size:22, weight:"bold", color: 'black'}
-                            }*/
+                            },{
+                              //another range
+                            }
                             ],
 	        				        yaxes: [{
 	        				            min: 0,
@@ -511,7 +518,9 @@
   	        				            ]*/
 	        				        }
 	        					});
-	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content')); //have to prependTo
+	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content'));
+                    var xaxisRange = $("<div class='axisLabel xaxisOldRange' style='font-weight:bold;'></div>").text("0.25\t0.333\t0.416\t0.499\t0.5832\t0.6665\t0.7498\t0.833\t0.9164\t1").appendTo($('#chart3_content')); //not acceptable
+                    var xaxisBottom = $("<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>").text("Crack Progression Rate").appendTo($('#chart3_content'));
 	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>").html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($('#chart3_content'));
 		          	}
 		          });
