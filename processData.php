@@ -471,6 +471,7 @@
 	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text("Load (lbs)").appendTo($('#chart'));
                     //console.log("test")
                     //console.log(sp);
+
 	        					var plot = $.plot('#chart3_content', sp, {
                       /*[
                         {
@@ -482,6 +483,7 @@
                           xaxis: 2
                         }
                     ],*/
+                          /*hooks: { processOffset: [pOff] },*/
 	        				        xaxes: [
                             {
                               position: "top",
@@ -489,7 +491,10 @@
 	        				            min: 0,
 	        				            font:{ size:22, weight:"bold", color: 'black'}
                             },{
-                              //another range
+                              position: "bottom",
+                              max: 1,
+                              min:0.25,
+                              font:{ size:22, weight:"bold", color: 'black'}
                             }
                             ],
 	        				        yaxes: [{
@@ -519,7 +524,7 @@
 	        				        }
 	        					});
 	        					var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content'));
-                    var xaxisRange = $("<div class='axisLabel xaxisOldRange' style='font-weight:bold;'></div>").text("0.25\t0.333\t0.416\t0.499\t0.5832\t0.6665\t0.7498\t0.833\t0.9164\t1").appendTo($('#chart3_content')); //not acceptable
+                    /*var xaxisRange = $("<div class='axisLabel xaxisOldRange' style='font-weight:bold;'></div>").text("0.25\t0.333\t0.416\t0.499\t0.5832\t0.6665\t0.7498\t0.833\t0.9164\t1").appendTo($('#chart3_content')); //not acceptable*/
                     var xaxisBottom = $("<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>").text("Crack Progression Rate").appendTo($('#chart3_content'));
 	        					var yaxisLabel = $("<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>").html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($('#chart3_content'));
 		          	}
