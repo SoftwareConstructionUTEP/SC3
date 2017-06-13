@@ -477,11 +477,11 @@ $(document).ready(function(){
     var plot = $.plot('#chart3_content', sp, {
       /*[
       {
-      data: data,
+      data: sp,
       xaxis: 1
     },
     {
-    data: data,
+    data: sp,
     xaxis: 2
   }
 ],*/
@@ -495,7 +495,7 @@ xaxes: [
   },{
     position: "bottom",
     max: 1,
-    min:0.25,
+    min:  0.25,
     font:{ size:22, weight:"bold", color: 'black'}
   }
 ],
