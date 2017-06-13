@@ -373,16 +373,16 @@ $(document).ready(function(){
         }
         //console.log(firstAndSecond)
         var sp = [];
-        var tmparr1 = [];
-        var tmparr2 = [];
+        //var tmparr1 = [];
+        //var tmparr2 = [];
         /*
         for(var i = 0; i <= 0; i += 0.03){//i <= 1.5; no lineas negras
         tmparr1.push([i, 1]);
         tmparr2.push([i, 3]);
       }
       */
-      sp.push({'data':tmparr1, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
-      sp.push({'data':tmparr2, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
+      //sp.push({'data':tmparr1, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
+      //sp.push({'data':tmparr2, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
       for(var i = 0; i < data.repetitions; i++){
         sp.push({'data':[[(-(data.coeff[i]*133.333)+133.333), data.fenergy[i]]], 'label': "Color of Specimen #" + (i+1), 'color': 'black', 'points':{'show':true,'radius':8,'fillColor':colors[i][0],'symbol':'circle'}});
       } //specimen fill color is hardcoded to 'black'
@@ -472,59 +472,68 @@ $(document).ready(function(){
     var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>").text("Displacement, in.").appendTo($('#chart')); //more space between this and graph, use css
     var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text("Load (lbs)").appendTo($('#chart'));
     //console.log("test")
-    //console.log(sp);
-
-    var plot = $.plot('#chart3_content', sp, {
-      /*[
+    console.log(sp);
+    console.log(sp[0]['data']);
+    console.log(sp[0]['points']['fillColor']);
+    //var plot = $.plot('#chart3_content', sp, {
+    var plot = $.plot('#chart3_content',
+     [
+       {
+        data: sp[0]['data'],
+        label: "Color of Specimen",
+        color: 'black',
+        points: {show: true, radius: 8, fillColor: sp[0]['points']['fillColor'], symbol: 'circle'},
+        xaxis: 1
+      },
       {
-      data: sp,
-      xaxis: 1
-    },
-    {
-    data: sp,
-    xaxis: 2
-  }
-],*/
-/*hooks: { processOffset: [pOff] },*/
-xaxes: [
-  {
-    position: "top",
-    max: 100,
-    min: 0,
-    font:{ size:22, weight:"bold", color: 'black'}
-  },{
-    position: "bottom",
-    max: 1,
-    min:  0.25,
-    font:{ size:22, weight:"bold", color: 'black'}
-  }
-],
-yaxes: [{
-  min: 0,
-  max: 4,
-  tickDecimals: 0,
-  font:{
-    size:22,
-    weight:"bold",
-    color: 'black'
-  }
-}],
-grid: {
-  markingsStyle: 'dashed',
-  markings: [
-    {xaxis: {from:  70, to: 100}, color: "rgb(104, 185, 67)", lineWidth: 2},//green
-    {xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
-    {xaxis: {from:  70, to: 70}, color: "red", lineWidth: 5},//vertical line
-    {xaxis: {from:  0, to: 30}, color: "rgb(199, 96, 86)", lineWidth: 2},//red
-    {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 2},
-    {xaxis: {from: 0, to: 100}, yaxis: {from: 3, to: 3}, color: "black", lineWidth: 2}
-  ],
-  /*markingsStyle: 'solid',
-  markings: [
-  {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 5}
-]*/
-}
-});
+        data: sp[0]['data'],
+        /*label: "Color of Specimen",*/
+        color: 'black',
+        points: {show: true, radius: 8, fillColor: sp[0]['points']['fillColor'], symbol: 'circle'},
+        xaxis: 2
+      }
+     ], {
+      xaxes: [
+        {
+          position: "top",
+          max: 100,
+          min: 0,
+          font:{ size:22, weight:"bold", color: 'black'}
+        },{
+          position: "bottom",
+          max: 1,
+          min: 0.25,
+          /*transform: function (v) { return Math.log(v); },*/
+          inverseTransform: function (v) { return Math.exp(v); },
+          font:{ size:22, weight:"bold", color: 'black'}
+        }
+      ],
+      yaxes: [{
+        min: 0,
+        max: 4,
+        tickDecimals: 0,
+        font:{
+          size:22,
+          weight:"bold",
+          color: 'black'
+        }
+      }],
+      grid: {
+        markingsStyle: 'dashed',
+        markings: [
+          {xaxis: {from:  70, to: 100}, color: "rgb(104, 185, 67)", lineWidth: 2},//green
+          {xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
+          {xaxis: {from:  70, to: 70}, color: "red", lineWidth: 5},//vertical line
+          {xaxis: {from:  0, to: 30}, color: "rgb(199, 96, 86)", lineWidth: 2},//red
+          {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 2},
+          {xaxis: {from: 0, to: 100}, yaxis: {from: 3, to: 3}, color: "black", lineWidth: 2}
+        ],
+        /*markingsStyle: 'solid',
+        markings: [
+        {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 5}
+      ]*/
+    }
+  });
 var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content'));
 /*var xaxisRange = $("<div class='axisLabel xaxisOldRange' style='font-weight:bold;'></div>").text("0.25\t0.333\t0.416\t0.499\t0.5832\t0.6665\t0.7498\t0.833\t0.9164\t1").appendTo($('#chart3_content')); //not acceptable*/
 var xaxisBottom = $("<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>").text("Crack Progression Rate").appendTo($('#chart3_content'));
