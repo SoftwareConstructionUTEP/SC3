@@ -474,7 +474,9 @@ $(document).ready(function(){
     //console.log("test")
     console.log(sp);
     console.log(sp[0]['data']);
+    console.log(sp[0]['data'][0]);
     console.log(sp[0]['points']['fillColor']);
+    console.log(((sp[0]['data'][0][0]-133.33)/-133.33));
     //var plot = $.plot('#chart3_content', sp, {
     var plot = $.plot('#chart3_content',
      [
@@ -486,6 +488,7 @@ $(document).ready(function(){
         xaxis: 1
       },
       {
+        /*sp[0]['data'][0][0] = ((sp[0]['data'][0][0]-133.33)/-133.33)*/
         data: sp[0]['data'],
         /*label: "Color of Specimen",*/
         color: 'black',
@@ -500,11 +503,17 @@ $(document).ready(function(){
           min: 0,
           font:{ size:22, weight:"bold", color: 'black'}
         },{
+          /*inverseTransform: function (v) { return -v; },*/
           position: "bottom",
           max: 1,
           min: 0.25,
+          transform: function (v) { return -v; },
+          inverseTransform: function (v) { return -v; },
+          /*ticks: [1, 0],
           /*transform: function (v) { return Math.log(v); },*/
-          inverseTransform: function (v) { return Math.exp(v); },
+          /*inverseTransform: function (v) { return Math.exp(v); },*/
+          /*inverseTransform: function (v) { return -v; },*/
+          /*inverse: true,*/
           font:{ size:22, weight:"bold", color: 'black'}
         }
       ],
