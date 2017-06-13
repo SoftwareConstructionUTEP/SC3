@@ -472,11 +472,11 @@ $(document).ready(function(){
     var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>").text("Displacement, in.").appendTo($('#chart')); //more space between this and graph, use css
     var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>").text("Load (lbs)").appendTo($('#chart'));
     //console.log("test")
-    console.log(sp);
+    /*console.log(sp);
     console.log(sp[0]['data']);
     console.log(sp[0]['data'][0]);
     console.log(sp[0]['points']['fillColor']);
-    console.log(((sp[0]['data'][0][0]-133.33)/-133.33));
+    console.log(((sp[0]['data'][0][0]-133.33)/-133.33));*/
     //var plot = $.plot('#chart3_content', sp, {
     var plot = $.plot('#chart3_content',
      [
@@ -492,7 +492,7 @@ $(document).ready(function(){
         data: sp[0]['data'],
         /*label: "Color of Specimen",*/
         color: 'black',
-        points: {show: true, radius: 8, fillColor: sp[0]['points']['fillColor'], symbol: 'circle'},
+        points: {show: false, radius: 8, fillColor: sp[0]['points']['fillColor'], symbol: 'circle'},
         xaxis: 2
       }
      ], {
