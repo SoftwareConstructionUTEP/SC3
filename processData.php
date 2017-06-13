@@ -254,7 +254,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
               <option value="#chart">Crack Initiation</option>
               <option value="#chart2">Crack Propagation</option>
               <option value="#chart4">Top LVDT</option>
-            </select><br>
+            </select><br><br>
             <!-- Performance -->
             <div id="chart3" style="height: 600px;">
               <!--<div id="chart3_prepend">hey</div> <br>-->
