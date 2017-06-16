@@ -62,6 +62,9 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
         <a target="_blank" href="http://ctis.utep.edu">
           <img src="img/ctis_transparent_white_2017.png" style="height: max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
         </a>
+        <a target="_blank" href="http://txdot.gov">
+          <img src="img/txdotnewlogo.png" style="height: max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
+        </a>
         <ul class="nav navbar-nav">
           <li>
             <a href="processData.php" style=" font-size: 16px; font-weight: bold;">Overlay Tester Analysis Tool v1.2 (06/07/17)</a> <!-- <a style="padding-top: 0px; padding-bottom: 0px;"> V1.0 </a> -->
@@ -99,6 +102,13 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
           <form autocomplete="off" id="otForm" enctype="multipart/form-data" action="uploadHandler.php" method="POST">
             <div class="checkbox">
               <label>
+                <input type="checkbox" name="txdotuse" id="txdotuse" value="txdotuse" checked>
+                <input type="text" name="txdotuse2" id="txdotuse2" value="checked" hidden>
+                For TXDOT use only
+              </label>
+            </div>
+            <div class="checkbox">
+              <label>
                 <input type="checkbox" value="false" name="cache" id="LIMScheck">
                 Retrieve existing data from LIMS
               </label>
@@ -110,7 +120,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
               <option>Shedworks</option>
             </select>
 
-            <label>Number of Specimens</label>
+            <label>Number of Replicates</label>
             <select class="form-control" type="text" id="numofspec" name="numofspec" required>
               <option>1</option>
               <!-- <option>2</option> -->
@@ -505,6 +515,8 @@ $(document).ready(function(){
         },{
           /*inverseTransform: function (v) { return -v; },*/
           position: "bottom",
+          tickColor: '#000000',
+          tickLength: 12,
           max: 1,
           min: 0.25,
           transform: function (v) { return -v; },
@@ -620,6 +632,30 @@ $('#table_select').on('change', function(){
   $('#chart4').hide();
 
   $($('#table_select').val()).fadeIn();
+});
+
+
+$('#txdotuse').change(function(data){
+  if($('#txdotuse').is(":checked") == false){
+    $('#txdotuse2').val("notchecked");
+    $('#smgr_id').attr('disabled', true);
+    $('#smgr_id').attr('required', false);
+
+    $('#LIMS').attr('disabled', true);
+    $('#LIMS').attr('required', false);
+
+    $('#LIMScheck').attr('disabled', true);
+  }else{
+    $('#txdotuse2').val("checked");
+    $('#smgr_id').attr('disabled', false);
+    $('#smgr_id').attr('required', true);
+
+    $('#LIMS').attr('disabled', false);
+    $('#LIMS').attr('required', true);
+
+    $('#LIMScheck').attr('disabled', false);
+  }
+
 });
 
 });

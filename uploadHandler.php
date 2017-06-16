@@ -18,12 +18,23 @@
 		$toReturn['top'] = $_POST['toplvdt'];
 		$_SESSION['LIMS'] = $_POST['LIMS'];
 		$lims = $_POST['LIMS'];
+
+		if(isset($_POST['txdotuse2']) && $_POST['txdotuse2'] == "notchecked"){
+			$conn = mysqli_connect("irpsrvgis35.utep.edu", "ctis", "19691963", "otdata");
+			$query = "SELECT COUNT(LIMS) AS count FROM cache";
+			$result = mysqli_query($conn, $query);
+			$row = mysqli_fetch_assoc($result);
+			mysqli_close($conn);
+
+			$lims = "nontxdot" . $row['count'];
+		}
+
 		$toReturn['lims'] = $lims;
 		$_SESSION['type'] = $_POST['device'];
 		$_SESSION['thickness'] = $_POST['specthickness'];
 		$_SESSION['width'] = $_POST['specwidth'];
 		$_SESSION['numofspec'] = $_POST['numofspec'];
-		if(checkEmpty($_POST['LIMS'])){
+		if(checkEmpty($_POST['LIMS']) && $_POST['txdotuse'] == "txdotuse"){
             $toReturn['error'] = "Must input LIMS value.";
         }
 		else {
@@ -32,7 +43,7 @@
             if ($conn -> connect_error) {
                 die("Connection failed: " . $conn -> connecterror);
             }
-            $sql = "SELECT * FROM cache WHERE lims = '" . $_POST['LIMS'] . "'";
+            $sql = "SELECT * FROM cache WHERE lims = '" . $lims . "'";
             $response = $conn -> query($sql);
 			if($response->num_rows > 0 AND $fromCache){
 				//get from db
@@ -48,7 +59,7 @@
 			    //uncoment for deployment
 			    $thickness = $_SESSION['thickness'];
 			    $width = $_SESSION['width'];
-			
+
 			    $firstCycle = array();
 			    $secondCycle = array();
 			    $normLoads = array();
@@ -59,15 +70,15 @@
 			    $fenergy = array();
 			    $r2 = array();
 			    $model = array();
-			
-			
-			
+
+
+
 			    for ($k=0; $k < $_SESSION['numofspec']; $k++) {
 			        $filepath = $_SESSION['rawfile'][$k];
-			
+
 			        $firstCycle[] = array();
 			        $secondCycle[] = array();
-			
+
 			        $maxLoads = array();
 			        $normLoads[] = array();
 			        $maxLoadIndex = -1;
@@ -109,9 +120,9 @@
 				          $temp_arr = explode('	',$logfile[15][0]);
 				          $temp_time = stamp2sec($temp_arr[1]);
 				          $temp_disp = $temp_arr[2];
-				
+
 				          for ($i=15; $i < sizeof($logfile)-1; $i++) {
-				
+
 				            $temp_arr = explode('	', $logfile[$i][0]);
 				            $disptime[$k][$i-15][0] = (stamp2sec($temp_arr[1]) - $temp_time); //time
 				            $disptime[$k][$i-15][1] = ($temp_arr[2] - $temp_disp)/10 * 0.0393701; //disp
@@ -178,10 +189,10 @@
 			            }
 			            $i++;
 			          }
-			
+
 			          $maxLoadVals[] = $csv[$maxLoadIndex][5];
 			          // $maxLoadVals[] = convert($csv[$maxLoadIndex][5], "kN", "lbf");
-			          
+
 				        if($_SESSION['top'] === "Yes"){
 				        	$disptime[$k] = array();
 					          $temp_arr = explode('	',$logfile[15][0]);
@@ -193,7 +204,7 @@
 					          }
 				        }
 			        }
-			
+
 			        //formula for normalized (currLoad / firstLoad)
 			        for($i = 0; $i < sizeof($maxLoads); $i++){
 			          $normLoads[$k][] = $maxLoads[$i]/$maxLoads[0];
@@ -225,8 +236,8 @@
 			          $area[$k] += (($firstCycle[$k][$i-1][1] + $firstCycle[$k][$i][1])*abs($firstCycle[$k][$i][0]-$firstCycle[$k][$i-1][0])) / 2;
 			        }
 			        $fenergy[] = $area[$k] / ($thickness*$width);
-			
-			
+
+
 			    }// For loop ends
 			    $toReturn['r2'] = $r2;
 				$toReturn['firstCycle'] = $firstCycle;
@@ -247,7 +258,7 @@
                 $toReturn['error'] = "LIMS value already exists";
             }
 			else if($fromCache){
-				$toReturn['error'] = "LIMS value doesn't exist";
+				$toReturn['error'] = "LIMS value doesn't exist" . $_SESSION['username'];
 			}
             else{
                 //everythijng ok
@@ -269,10 +280,10 @@
 							$name = $_FILES['logfile']['name'][$i];
 							$_SESSION['logfile'][$i] = "$directory/$name";
 							move_uploaded_file($tmp_name, "$directory/$name");
-							$sql = "INSERT INTO cache(lims, path, log, type) VALUES('$lims', '".$_SESSION['rawfile'][$i]."', '".$_SESSION['logfile'][$i]."', '".$_POST['device']."')";
+							$sql = "INSERT INTO cache(lims, path, log, type, username) VALUES('$lims', '".$_SESSION['rawfile'][$i]."', '".$_SESSION['logfile'][$i]."', '".$_POST['device']."', '".$_SESSION['username']."')";
 						}
 						else{
-							$sql = "INSERT INTO cache(lims, path, type) VALUES('$lims', '".$_SESSION['rawfile'][$i]."', '".$_POST['device']."')";
+							$sql = "INSERT INTO cache(lims, path, type, username) VALUES('$lims', '".$_SESSION['rawfile'][$i]."', '".$_POST['device']."', '".$_SESSION['username']."')";
 						}
 						$toReturn['sql'] = $sql;
 						$response = $conn->query($sql);
@@ -283,7 +294,7 @@
 					    //uncoment for deployment
 					    $thickness = $_SESSION['thickness'];
 					    $width = $_SESSION['width'];
-					
+
 					    $firstCycle = array();
 					    $secondCycle = array();
 					    $normLoads = array();
@@ -294,15 +305,15 @@
 					    $fenergy = array();
 					    $r2 = array();
 					    $model = array();
-					
-					
-					
+
+
+
 					    for ($k=0; $k < $_SESSION['numofspec']; $k++) {
 					        $filepath = $_SESSION['rawfile'][$k];
-					
+
 					        $firstCycle[] = array();
 					        $secondCycle[] = array();
-					
+
 					        $maxLoads = array();
 					        $normLoads[] = array();
 					        $maxLoadIndex = -1;
@@ -344,9 +355,9 @@
 						          $temp_arr = explode('	',$logfile[15][0]);
 						          $temp_time = stamp2sec($temp_arr[1]);
 						          $temp_disp = $temp_arr[2];
-						
+
 						          for ($i=15; $i < sizeof($logfile)-1; $i++) {
-						
+
 						            $temp_arr = explode('	', $logfile[$i][0]);
 						            $disptime[$k][$i-15][0] = (stamp2sec($temp_arr[1]) - $temp_time); //time
 						            $disptime[$k][$i-15][1] = ($temp_arr[2] - $temp_disp)/10 * 0.0393701; //disp
@@ -413,10 +424,10 @@
 					            }
 					            $i++;
 					          }
-					
+
 					          $maxLoadVals[] = $csv[$maxLoadIndex][5];
 					          // $maxLoadVals[] = convert($csv[$maxLoadIndex][5], "kN", "lbf");
-					
+
 					        $disptime[$k] = array();
 					          $temp_arr = explode('	',$logfile[15][0]);
 					          $temp_time = stamp2sec($temp_arr[1]);
@@ -426,7 +437,7 @@
 					        $disptime[$k][$i-15] = array(stamp2sec($temp_arr[1]) - $temp_time, convert(preg_replace('/\s+/', '', $temp_arr[2])));
 					          }
 					        }
-					
+
 					        //formula for normalized (currLoad / firstLoad)
 					        for($i = 0; $i < sizeof($maxLoads); $i++){
 					          $normLoads[$k][] = $maxLoads[$i]/$maxLoads[0];
@@ -459,8 +470,8 @@
 					          $area[$k] += (($firstCycle[$k][$i-1][1] + $firstCycle[$k][$i][1])*abs($firstCycle[$k][$i][0]-$firstCycle[$k][$i-1][0])) / 2;
 					        }
 					        $fenergy[] = $area[$k] / ($thickness*$width);
-					
-					
+
+
 					    }// For loop ends
 					    $toReturn['r2'] = $r2;
 						$toReturn['firstCycle'] = $firstCycle;
@@ -503,11 +514,11 @@
 			            case UPLOAD_ERR_EXTENSION:
 			                $message = "File upload stopped by extension";
 			                break;
-			
+
 			            default:
 			                $message = "Unknown upload error";
 			                break;
-			        } 
+			        }
 					$toReturn['error'] = $message;
 				}
             }
@@ -517,6 +528,6 @@
 		$toReturn['error'] = "Something went wrong. please reload the page and try again.";
 	}
 	header('Content-Type: application/json');
-	$_SESSION = array('in'=>true);
+	// $_SESSION = array('in'=>true);
 	echo json_encode($toReturn);
 ?>

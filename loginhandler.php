@@ -21,11 +21,11 @@
                 $salt = $row['salt'];
                 $password = $password . $salt;
                 $hash = md5($password);
-                if($hash === $row['password'] AND $row['approved'] == 1){
-                	$_SESSION['in'] = true;
+                if($hash == $row['password'] AND $row['approved'] == 1){
+                		$_SESSION['in'] = true;
                     $_SESSION['username'] = $username;
                     $_SESSION['id'] = $row['id'];
-					header('Location: processData.php');
+										header('Location: processData.php');
                 }
                 else{
                     echo "Username or password incorrect";
