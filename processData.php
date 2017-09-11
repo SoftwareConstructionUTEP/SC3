@@ -269,7 +269,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
             <div id="chart3" style="height: 600px;">
               <!--<div id="chart3_prepend">hey</div> <br>-->
               <div class="col-md-11 col-md-offset-1">
-                <div> <strong>Disclaimer:</strong> The Critical Fracture Energy (CFE) and the Crack Progression Rate (CPR) are the performance-based parameters from the overlay test that characterize the cracking susceptibility of asphalt mixtures.  Please utilize these parameters when characterizing the performance of asphalt mixtures and carrying out statistical calculations such as standard deviation and coefficient of variation. The Crack Resistance Index (CRI) is specified only for quality control and acceptance practices.  The CRI index is translated from the Crack Progression Rate.  The CRI shall not be used for statistical calculations. </div> <br> <br>
+              <!--  <div> <strong>Disclaimer:</strong> The Critical Fracture Energy (CFE) and the Crack Progression Rate (CPR) are the performance-based parameters from the overlay test that characterize the cracking susceptibility of asphalt mixtures.  Please utilize these parameters when characterizing the performance of asphalt mixtures and carrying out statistical calculations such as standard deviation and coefficient of variation. The Crack Resistance Index (CRI) is specified only for quality control and acceptance practices.  The CRI index is translated from the Crack Progression Rate.  The CRI shall not be used for statistical calculations. </div> <br> <br>-->
                 <div id="chart3_content" style="height: 500px;"> </div> <br> <br> <br>
               </div>
 
