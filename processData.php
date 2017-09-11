@@ -67,7 +67,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
         </a>
         <ul class="nav navbar-nav">
           <li>
-            <a href="processData.php" style=" font-size: 16px; font-weight: bold;">Overlay Tester Analysis Tool v1.2 (06/07/17)</a> <!-- <a style="padding-top: 0px; padding-bottom: 0px;"> V1.0 </a> -->
+            <a href="processData.php" style=" font-size: 16px; font-weight: bold;">Overlay Tester Analysis Tool v1.3 (09/11/17)</a> <!-- <a style="padding-top: 0px; padding-bottom: 0px;"> V1.0 </a> -->
             <!-- <a> hey </a> -->
             <!-- note: version 1.2 as of Wednesday, June 7th  -->
           </li>
@@ -275,19 +275,20 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
 
               <div class="col-lg-8 col-lg-offset-2">
                 <div class="progress">
-                  <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: 34%">
-                    <span class="sr-only">10% Complete (danger)</span>
-                  </div>
-                  <div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 33%">
-                    <span class="sr-only">20% Complete (warning)</span>
-                  </div>
                   <div class="progress-bar progress-bar-success progress-bar-striped" style="width: 33%">
                     <span class="sr-only">35% Complete (success)</span>
                   </div>
+                  <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: 67%">
+                    <span class="sr-only">10% Complete (danger)</span>
+                  </div>
+                  <!--<div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 33%">
+                    <span class="sr-only">20% Complete (warning)</span>
+                  </div>-->
+
                 </div>
               </div>
               <div class="col-lg-8 col-lg-offset-3">
-                <h4 style="display:inline-block;">Lower Quality Mix</h4> <i class="fa fa-long-arrow-right fa-2x" style="display:inline-block;" aria-hidden="true"></i> <h4 style="display:inline-block;">Crack Resistant Mix</h4>
+                <h4 style="display:inline-block;">Crack Resistant Mix</h4> <i class="fa fa-long-arrow-right fa-2x" style="display:inline-block;" aria-hidden="true"></i> <h4 style="display:inline-block;">Lower Quality Mix</h4>
               </div>
 
             </div>
@@ -393,8 +394,10 @@ $(document).ready(function(){
       */
       //sp.push({'data':tmparr1, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
       //sp.push({'data':tmparr2, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
+      var num_spe;
       for(var i = 0; i < data.repetitions; i++){
-        sp.push({'data':[[(-(data.coeff[i]*133.333)+133.333), data.fenergy[i]]], 'label': "Color of Specimen #" + (i+1), 'color': 'black', 'points':{'show':true,'radius':8,'fillColor':colors[i][0],'symbol':'circle'}});
+        sp.push({'data':[[(-(data.coeff[i]*133.333)+133.333), data.fenergy[i]]], 'label': "Specimen #" + (i+1), 'color': 'black', 'points':{'show':true,'radius':8,'fillColor':colors[i][0],'symbol':'circle'}});
+        num_spe = i+1;
       } //specimen fill color is hardcoded to 'black'
       //console.log(sp);
       if(data.hasOwnProperty('disptime')){
@@ -492,7 +495,7 @@ $(document).ready(function(){
      [
        {
         data: sp[0]['data'],
-        label: "Color of Specimen",
+        label: "Specimen #" + num_spe,
         color: 'black',
         points: {show: true, radius: 8, fillColor: sp[0]['points']['fillColor'], symbol: 'circle'},
         xaxis: 1
@@ -507,20 +510,20 @@ $(document).ready(function(){
       }
      ], {
       xaxes: [
-        {
+        /*{
           position: "top",
           max: 100,
           min: 0,
           font:{ size:22, weight:"bold", color: 'black'}
-        },{
+        },*/{
           /*inverseTransform: function (v) { return -v; },*/
           position: "bottom",
           tickColor: '#000000',
           tickLength: 12,
           max: 1,
           min: 0.25,
-          transform: function (v) { return -v; },
-          inverseTransform: function (v) { return -v; },
+          /*transform: function (v) { return -v; },
+          inverseTransform: function (v) { return -v; },*/
           /*ticks: [1, 0],
           /*transform: function (v) { return Math.log(v); },*/
           /*inverseTransform: function (v) { return Math.exp(v); },*/
@@ -542,10 +545,10 @@ $(document).ready(function(){
       grid: {
         markingsStyle: 'dashed',
         markings: [
-          {xaxis: {from:  70, to: 100}, color: "rgb(104, 185, 67)", lineWidth: 2},//green
-          {xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
-          {xaxis: {from:  70, to: 70}, color: "red", lineWidth: 5},//vertical line
-          {xaxis: {from:  0, to: 30}, color: "rgb(199, 96, 86)", lineWidth: 2},//red
+          {xaxis: {from:  0, to: 0.5}, color: "rgb(104, 185, 67)", lineWidth: 2},//green
+          //{xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
+          {xaxis: {from:  0.5, to: 1}, color: "rgb(199, 96, 86)", lineWidth: 2},//red
+          {xaxis: {from:  0.5, to: 0.5}, color: "red", lineWidth: 5},//vertical line
           {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 2},
           {xaxis: {from: 0, to: 100}, yaxis: {from: 3, to: 3}, color: "black", lineWidth: 2}
         ],
@@ -555,7 +558,7 @@ $(document).ready(function(){
       ]*/
     }
   });
-var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content'));
+//var xaxisLabel = $("<div class='axisLabel xaxisLabel' style='font-weight:bold;'></div>").text("Crack Resistance Index").appendTo($('#chart3_content'));
 /*var xaxisRange = $("<div class='axisLabel xaxisOldRange' style='font-weight:bold;'></div>").text("0.25\t0.333\t0.416\t0.499\t0.5832\t0.6665\t0.7498\t0.833\t0.9164\t1").appendTo($('#chart3_content')); //not acceptable*/
 var xaxisBottom = $("<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>").text("Crack Progression Rate").appendTo($('#chart3_content'));
 var yaxisLabel = $("<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>").html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($('#chart3_content'));
