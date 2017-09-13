@@ -197,6 +197,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
           </div>
           <table id="results" class="table table-striped table-bordered">
             <thead>
+              <th>#</th>
               <th>LIMS</th>
               <!-- <th>Case</th> -->
               <!-- <th>Specimen</th> -->
@@ -336,6 +337,7 @@ $('#LIMScheck').on('change', function(){
 var colors =[['#000000','000000'], ['rgb(0, 148, 255)', 'rgb(130, 174, 255)'], ['#A1D490', '#B2E6A1'], ['#CD88E3', '#D599E8'], ['#DEA96D', '#FCD2A2'], ['#E83186', '#F071AC']];
 
 $(document).ready(function(){
+  var results_table_counter = 1;
   $('#chart_area').hide();
   $("#otForm").on("submit", function(e) {
     var data = new FormData($('form')[0]);
@@ -361,7 +363,8 @@ $(document).ready(function(){
         $('#chart_area').show();
         $('#start').hide();
         for(var i = 0; i < data.repetitions; i++){
-          $('#results').children('tbody').append('<tr><td>'+data.lims +'</td><td>'+Math.round(data.maxLoadVals[i]*100)/100+'</td><td>'+Math.round(data.fenergy[i]*100)/100+'</td><td>'+Math.round(data.coeff[i]*100)/100+'</td><td>'+data.normLoads[i].length+'</td></tr>');
+          $('#results').children('tbody').append('<tr><td>'+ results_table_counter +'</td><td>'+data.lims +'</td><td>'+Math.round(data.maxLoadVals[i]*100)/100+'</td><td>'+Math.round(data.fenergy[i]*100)/100+'</td><td>'+Math.round(data.coeff[i]*100)/100+'</td><td>'+data.normLoads[i].length+'</td></tr>');
+          results_table_counter++;
         }
         var norm = data.normLoads;
         var fenergy = data.fenergy[i];
@@ -396,7 +399,7 @@ $(document).ready(function(){
       //sp.push({'data':tmparr2, 'label':null, 'lines':{'show':true}, 'points':{'show':true, 'radius':1}, 'color':'rgba(0, 0, 0, 0.3)'});
       var num_spe;
       for(var i = 0; i < data.repetitions; i++){
-        sp.push({'data':[[(-(data.coeff[i]*133.333)+133.333), data.fenergy[i]]], 'label': "Specimen #" + (i+1), 'color': 'black', 'points':{'show':true,'radius':8,'fillColor':colors[i][0],'symbol':'circle'}});
+        sp.push({'data':[[((data.coeff[i])), data.fenergy[i]]], 'label': "Specimen #" + (i+1), 'color': 'black', 'points':{'show':true,'radius':8,'fillColor':colors[i][0],'symbol':'circle'}});
         num_spe = i+1;
       } //specimen fill color is hardcoded to 'black'
       //console.log(sp);
@@ -506,7 +509,7 @@ $(document).ready(function(){
         /*label: "Color of Specimen",*/
         color: 'black',
         points: {show: false, radius: 8, fillColor: sp[0]['points']['fillColor'], symbol: 'circle'},
-        xaxis: 2
+        xaxis: 1
       }
      ], {
       xaxes: [
