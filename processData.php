@@ -126,7 +126,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
               <!-- <option>2</option> -->
             </select>
 
-            <label>TOP LVDT</label>
+            <label>TOP LVDT (Log File)</label>
             <select class="form-control" type="text" id="toplvdt" name="toplvdt" required>
               <option>Yes</option>
               <option selected>No</option>
@@ -220,7 +220,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
 
                   echo '<tr>
                   <td>'. $_SESSION['LIMS'] .'</td>
-                  <td>'.round($maxLoadVals[$i-1],2).'</td>
+                  <td>'.ceil($maxLoadVals[$i-1]).'</td>
                   <td>'.round($fenergy[$i-1],2).'</td>
                   <td>'.round($coeff[$i-1],2).' '. $warning  .'</td>
                   <td>'.count($normLoads[$i-1]).'</td>
@@ -363,7 +363,13 @@ $(document).ready(function(){
         $('#chart_area').show();
         $('#start').hide();
         for(var i = 0; i < data.repetitions; i++){
-          $('#results').children('tbody').append('<tr><td>'+ results_table_counter +'</td><td>'+data.lims +'</td><td>'+Math.round(data.maxLoadVals[i]*100)/100+'</td><td>'+Math.round(data.fenergy[i]*100)/100+'</td><td>'+Math.round(data.coeff[i]*100)/100+'</td><td>'+data.normLoads[i].length+'</td></tr>');
+          $('#results').children('tbody').append('<tr>\
+                                                  <td>'+ results_table_counter +'</td>\
+                                                  <td>'+data.lims +'</td>\
+                                                  <td>'+Math.ceil((data.maxLoadVals[i]*100)/100)+'</td>\
+                                                  <td>'+Math.round(data.fenergy[i]*100)/100+'</td>\
+                                                  <td>'+ ((data.coeff[i]*100)/100).toFixed(2) +'</td>\
+                                                  <td>'+data.normLoads[i].length+'</td></tr>');
           results_table_counter++;
         }
         var norm = data.normLoads;
@@ -524,7 +530,7 @@ $(document).ready(function(){
           tickColor: '#000000',
           tickLength: 12,
           max: 1,
-          min: 0.25,
+          min: 0,
           /*transform: function (v) { return -v; },
           inverseTransform: function (v) { return -v; },*/
           /*ticks: [1, 0],
@@ -537,7 +543,7 @@ $(document).ready(function(){
       ],
       yaxes: [{
         min: 0,
-        max: 4,
+        max: 6,
         tickDecimals: 0,
         font:{
           size:22,
@@ -589,6 +595,9 @@ $('#device').change(function(){
     $('#peaks_label').hide();
     $('#peaks').hide();
   }else if(temp == 'Cooper'){
+
+    $('#toplvdt').val('Yes');
+
     $('#logfile').attr('required', true);
     $('#logfile_label').show();
     $('#logfile').show();

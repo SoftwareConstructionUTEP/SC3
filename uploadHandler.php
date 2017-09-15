@@ -166,7 +166,7 @@
 			          for ($i=0; $i < sizeof($tmp)-1; $i++) {
 			            $csv[] = explode("\t", $tmp[$i]);
 			          }
-			          $i = 37;//offset
+			          $i = 40;//offset
 			          $initial_displace = abs(convert($csv[$i][4], "mm", "in"));
 			          $length = sizeof($csv);
 			          while($i < $length-1){
