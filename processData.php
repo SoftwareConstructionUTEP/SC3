@@ -276,10 +276,10 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
 
               <div class="col-lg-8 col-lg-offset-2">
                 <div class="progress">
-                  <div class="progress-bar progress-bar-success progress-bar-striped" style="width: 33%">
+                  <div class="progress-bar progress-bar-success progress-bar-striped" style="width: 50%">
                     <span class="sr-only">35% Complete (success)</span>
                   </div>
-                  <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: 67%">
+                  <div class="progress-bar progress-bar-danger progress-bar-striped" style="width: 50%">
                     <span class="sr-only">10% Complete (danger)</span>
                   </div>
                   <!--<div class="progress-bar progress-bar-warning progress-bar-striped" style="width: 33%">
