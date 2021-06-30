@@ -21,7 +21,7 @@
 		$lims = $_POST['LIMS'];
 
 		if(isset($_POST['txdotuse2']) && $_POST['txdotuse2'] == "notchecked"){
-			$conn = mysqli_connect("irpsrvgis35.utep.edu", "ctis", "19691963", "otdata");
+			$conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
 			$query = "SELECT COUNT(LIMS) AS count FROM cache";
 			$result = mysqli_query($conn, $query);
 			$row = mysqli_fetch_assoc($result);
