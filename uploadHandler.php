@@ -191,8 +191,8 @@
 			            $i++;
 			          }
 
-			          $maxLoadVals[] = $csv[$maxLoadIndex][5];
-			          // $maxLoadVals[] = convert($csv[$maxLoadIndex][5], "kN", "lbf");
+			          //$maxLoadVals[] = $csv[$maxLoadIndex][5];
+			          $maxLoadVals[] = convert($csv[$maxLoadIndex][5], "kN", "lbf");
 
 				        if($_SESSION['top'] === "Yes"){
 				        	$disptime[$k] = array();
