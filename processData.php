@@ -718,11 +718,11 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
         $('#peaks').hide();
       } else if (temp == 'Cooper') {
 
-        $('#toplvdt').val('Yes');
+        // $('#toplvdt').val('Yes');
 
-        $('#logfile').attr('required', true);
-        $('#logfile_label').show();
-        $('#logfile').show();
+        // $('#logfile').attr('required', true);
+        // $('#logfile_label').show();
+        // $('#logfile').show();
 
         $('#peaks').attr('required', false);
         $('#peaks_label').hide();

@@ -1,4 +1,6 @@
 <?php
+include('utils.php');
+include('conversions.php');
 # INITIALIZATION
 ini_set('memory_limit', '1024M');
 error_reporting(0);
@@ -21,9 +23,6 @@ if ($submitted_clicked) {
 
 function main()
 {
-    include('utils.php');
-    
-
     // * ARRAY TO STORE DATA FOR FRONTEND
     $toReturn = array();
 
@@ -34,17 +33,15 @@ function main()
     $_SESSION['numofspec'] = $_POST['numofspec'];
     $_SESSION['top'] = $_POST['toplvdt'];
     $LIMS = rand(0, 999999999);
-
-    // * INITIAL DATA SET TO RETURN
-    $toReturn['repetitions'] = $_POST['numofspec'];
-    $toReturn['lims'] = $LIMS;
-    $toReturn['top'] = $TOP;
+    $_SESSION['LIMS'] = $LIMS;
+ 
+  
 
     // * Save local copy of file
     save_file_data($LIMS);
 
     // run the whole show
-    doMainWork();
+    doMainWork($toReturn,$LIMS);
 }
 
 function save_file_data($LIMS)
@@ -161,14 +158,15 @@ function doAMPT($filepath, $firstCycle, $secondCycle, $disptime, $maxLoadVals, $
 }
 
 function doCooper($fenergy,$filepath, $maxLoads, $disptime, $normLoads, $coeff,$maxLoadVals,$area,$r2,$model)
-{
+{    
     $k = 0;
-    $logfile = array_map('str_getcsv', file($_SESSION['logfile'][$k]));
     $disptime[$k] = array();
-    $temp_arr = explode('	', $logfile[15][0]);
-    $temp_time = stamp2sec($temp_arr[1]);
     $tmp = array_map('str_getcsv', file($filepath));
-    $tmp = explode("\r", $tmp[0][0]);
+
+    
+    $tmp = explode("\r", $tmp[0][0]); // ! ERROR FOUND HERE FOR FILE 359 -- this works for 360 only, for some reason -- 361 not tested
+    // ! look at data to see what is the issue
+
     $csv = array();
 
     for ($i = 0; $i < sizeof($tmp) - 1; $i++) {
@@ -176,6 +174,7 @@ function doCooper($fenergy,$filepath, $maxLoads, $disptime, $normLoads, $coeff,$
     }
     //   $i = 37;//offset
     $i = 40;
+    
     $initial_displace = convert($csv[$i][4], "mm", "in");
     $length = sizeof($csv);
     while ($i < $length - 1) {
@@ -197,16 +196,16 @@ function doCooper($fenergy,$filepath, $maxLoads, $disptime, $normLoads, $coeff,$
         }
         $i++;
     }
-
+    
     //$maxLoadVals[] = $csv[$maxLoadIndex][5];
     $maxLoadVals[] = convert($csv[$maxLoadIndex][5], "kN", "lbf");
 
 
     // $temp_disp = convert($temp_arr[2]);
-    for ($i = 15; $i < sizeof($logfile) - 1; $i++) {
-        $temp_arr = explode('	', $logfile[$i][0]);
-        $disptime[$k][$i - 15] = array(stamp2sec($temp_arr[1]) - $temp_time, convert(preg_replace('/\s+/', '', $temp_arr[2])));
-    }
+    // for ($i = 15; $i < sizeof($logfile) - 1; $i++) {
+    //     $temp_arr = explode('	', $logfile[$i][0]);
+    //     $disptime[$k][$i - 15] = array(stamp2sec($temp_arr[1]) - $temp_time, convert(preg_replace('/\s+/', '', $temp_arr[2])));
+    // }
 
     //formula for normalized (currLoad / firstLoad)
     for ($i = 0; $i < sizeof($maxLoads); $i++) {
@@ -232,20 +231,35 @@ function doCooper($fenergy,$filepath, $maxLoads, $disptime, $normLoads, $coeff,$
         $valtop += ($normLoads[$k][$j] - pow($j + 1, -$coeff[$k])) * ($normLoads[$k][$j] - pow($j + 1, -$coeff[$k])); //(yi - yreal)^2
         $valbot += ($normLoads[$k][$j]) * ($normLoads[$k][$j]);
     }
+    
 
     //$r2[] = 0.99;
     $r2[] = 1 - $valtop / $valbot;
     //code to calculate the area
     $area[] = 0;
-    //TODO make the "-21" not static should be offest deppends on each type of machine
-    for ($i = 1; $i <= ($maxLoadIndex - 21); $i++) {
+    //TODO make the "-21" or "40" not static should be offest deppends on each type of machine
+    for ($i = 1; $i <= ($maxLoadIndex - 40); $i++) {
         $area[$k] += (($firstCycle[$k][$i - 1][1] + $firstCycle[$k][$i][1]) * abs($firstCycle[$k][$i][0] - $firstCycle[$k][$i - 1][0])) / 2;
     }
     $fenergy[] = $area[$k] / ($_SESSION['thickness'] *$_SESSION['width']);
+ 
+    // Store results
     $toReturn['maxIndex'] = $maxLoadIndex;
+    $toReturn['r2'] = $r2;
+    $toReturn['firstCycle'] = $firstCycle;
+    $toReturn['secondCycle'] = $secondCycle;
+    $toReturn['maxLoadVals'] = $maxLoadVals;
+    $toReturn['fenergy'] = $fenergy;
+    $toReturn['coeff'] = $coeff;
+    $toReturn['normLoads'] = $normLoads;
+    $toReturn['lims'] = $_SESSION['LIMS'];
+    $toReturn['top'] = $_SESSION['top'];
+    $toReturn['repetitions'] = $_POST['numofspec'];
+    
+    returnData($toReturn); 
 }
 
-function doMainWork(){
+function doMainWork($toReturn,$lims){
     
     // * MAIN VARIABLES USED
     $firstCycle = array();
@@ -265,35 +279,25 @@ function doMainWork(){
     $filepath = $_SESSION['rawfile'][$k];
 
     // Find type and assign work
-    if ($_SESSION('type') == "Shedworks") {
+    if ($_SESSION['type'] == "Shedworks") {
         doShedworks($filepath, $maxLoadVals, $disptime);
     }
     if ($_SESSION['type'] == "AMPT") {
         doAMPT($filepath,$firstCycle,$secondCycle,$disptime,$maxLoadVals,$maxLoads);
     } else {
-        doCooper($fenergy,$filepath,$maxLoads,$disptime,$normLoads,$coeff,$maxLoadVals,$area,$r2,$model);
+        doCooper($fenergy,$filepath,$maxLoads,$disptime,$normLoads,$coeff,$maxLoadVals,$area,$r2,$model,$toReturn,$lims);
     }
-
-    // Store results
-    $toReturn['r2'] = $r2;
-    $toReturn['firstCycle'] = $firstCycle;
-    $toReturn['secondCycle'] = $secondCycle;
-    $toReturn['maxLoadVals'] = $maxLoadVals;
-    $toReturn['fenergy'] = $fenergy;
-    $toReturn['coeff'] = $coeff;
-    $toReturn['normLoads'] = $normLoads;
-
-    echo $toReturn;
-    
     if ($_SESSION['top'] === "Yes") {
         $toReturn['disptime'] = $disptime;
     }
+ 
 
     // Return data
-    returnData($toReturn); 
+    //returnData($toReturn); 
 }
 
 function returnData($toReturn){
     header('Content-Type: application/json');
     echo json_encode($toReturn);
+    return;
 }

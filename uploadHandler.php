@@ -384,8 +384,6 @@ if (isset($_POST['submit'])) {
 							}
 							$maxLoadVals[] = convert($csv[$maxLoadIndex][2], "kN", "lbf");
 						} else {
-
-
 							//cooper
 							$logfile = array_map('str_getcsv', file($_SESSION['logfile'][$k]));
 							$tmp = array_map('str_getcsv', file($filepath));
@@ -396,7 +394,6 @@ if (isset($_POST['submit'])) {
 							}
 							//   $i = 37;//offset
 							$i = 40;
-							echo $csv[$i][4];
 							$initial_displace = abs(convert($csv[$i][4], "mm", "in"));
 							$length = sizeof($csv);
 							while ($i < $length - 1) {
