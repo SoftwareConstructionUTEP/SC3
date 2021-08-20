@@ -106,17 +106,18 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
         <div class="panel panel-primary">
           <div class="panel-heading">Input</div>
           <div class="panel-body">
+
             <form autocomplete="off" id="otForm" enctype="multipart/form-data" action="ot_data_handler.php" method="POST">
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" name="txdotuse" id="txdotuse" value="txdotuse" checked >
+                  <input type="checkbox" name="txdotuse" id="txdotuse" value="txdotuse" checked>
                   <input type="text" name="txdotuse2" id="txdotuse2" value="checked" hidden>
                   For TXDOT use only
                 </label>
               </div>
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" value="false" name="cache" id="LIMScheck" >
+                  <input type="checkbox" value="false" name="cache" id="LIMScheck">
                   Retrieve existing data from LIMS
                 </label>
               </div>
@@ -146,34 +147,34 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
               <input class="form-control" type="number" step="0.01" id="specwidth" name="specwidth" placeholder="3" value="3" required readonly>
 
               <label>Mix Type</label>
-              <input class="form-control" type="text" id="mixType" name="mixType" >
+              <input class="form-control" type="text" id="mixType" name="mixType">
 
-           <label>Site Manager ID</label>
-              <input class="form-control" type="text" id="smgr_id" name="smgr_id" > 
+              <label>Site Manager ID</label>
+              <input class="form-control" type="text" id="smgr_id" name="smgr_id">
 
-               <label>LIMS</label>
+              <label>LIMS</label>
               <input class="form-control" type="text" id="LIMS" name="LIMS" value="12345588">
-              
+
               <label>Aggregate Description</label>
-              <input class="form-control" type="text" id="description" name="description" >
+              <input class="form-control" type="text" id="description" name="description">
 
               <label>Asphalt Grade</label>
-              <input class="form-control" type="text" id="asphalt_grade" name="asphalt_grade" >
+              <input class="form-control" type="text" id="asphalt_grade" name="asphalt_grade">
 
               <label>Asphalt Source</label>
-              <input class="form-control" type="text" id="asphalt_source" name="asphalt_source" >
+              <input class="form-control" type="text" id="asphalt_source" name="asphalt_source">
 
               <label>Asphalt Content</label>
-              <input class="form-control" type="number" step="0.01" id="asphaltcontent" name="asphaltcontent" placeholder="Leave empty if unknown or not applicable" >
+              <input class="form-control" type="number" step="0.01" id="asphaltcontent" name="asphaltcontent" placeholder="Leave empty if unknown or not applicable">
 
               <label>% RAP</label>
-              <input class="form-control" type="number" step="0.01" id="rappercent" name="rappercent" placeholder="Leave empty if unknown or not applicable" >
+              <input class="form-control" type="number" step="0.01" id="rappercent" name="rappercent" placeholder="Leave empty if unknown or not applicable">
 
               <label>% RAS</label>
-              <input class="form-control" type="number" step="0.01" id="raspercent" name="raspercent" placeholder="Leave empty if unknown or not applicable" >
+              <input class="form-control" type="number" step="0.01" id="raspercent" name="raspercent" placeholder="Leave empty if unknown or not applicable">
 
               <label>Operator</label>
-              <input class="form-control" type="text" id="operator" name="operator" > 
+              <input class="form-control" type="text" id="operator" name="operator">
 
               <label>Data Reduction Date</label>
               <input class="form-control" type="text" id="date" name="date" readonly>
@@ -182,13 +183,13 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
               <hr style="border-color:#337ab7; border-width:1px; border-radius:25px;">
 
               <label>Source data</label>
-              <input class="form-control-file" type="file" id="rawData" name="rawData[]" required multiple> <br>
+              <input class="form-control" type="file" id="rawData" name="rawData" required multiple> <br>
 
               <label id="peaks_label">Peaks (CSV)</label>
               <input class="form-control" type="file" id="peaks" name="peaks" required multiple>
 
               <label id="logfile_label">Log File (LOG)</label>
-              <input class="form-control" type="file" id="logfile" name="logfile[]" required multiple>
+              <input class="form-control" type="file" id="logfile" name="logfile" required multiple>
 
               <br><input class="btn btn-block btn-primary" type="submit" name="submit" id="submit">
 
@@ -358,6 +359,8 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
     $("#otForm").on("submit", function(e) {
 
       var data = new FormData($('form')[0]);
+      let form_data = $('form')[0];
+      console.log(form_data);
       data.append('submit', true);
 
       e.preventDefault();
