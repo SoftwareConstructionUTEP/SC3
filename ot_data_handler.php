@@ -1,5 +1,4 @@
 <?php
-
 include('utils.php');
 include('conversions.php');
 # INITIALIZATION
@@ -40,7 +39,7 @@ function main()
 
 
     // * Save local copy of file
-   // save_file_data($LIMS);
+    save_file_data($LIMS);
 
     // run the whole show
     doMainWork($toReturn, $LIMS);
@@ -56,13 +55,15 @@ function save_file_data($LIMS)
 
     $i = 0;
 
-    $tmp_name = $_FILES["rawData"]["tmp_name"][$i];
+    $tmp_name = $_FILES["rawData"]["tmp_name"];
     $directory = 'rawfiles';
-    $name = $_FILES['rawData']['name'][$i];
-    $_SESSION['rawfile'][$i] = "$directory/$name";
-
+    $name = $_FILES['rawData']['name'];
+ 
+    $_SESSION['rawfile'] = "$directory/$name";
+    
+ 
     move_uploaded_file($tmp_name, "$directory/$name");
-
+    
     if ($_POST['device'] != 'AMPT' and $_SESSION['top'] === "Yes") {
         // Log File
         $tmp_name = $_FILES["logfile"]["tmp_name"][$i];
@@ -177,7 +178,7 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
     $_CRI         = 11;
 
     $csv = Array();
-    $csv = getCSV($filepath);
+    $csv = getCSV($_SESSION['rawfile']);
     // return;
     $k = 0;
     $disptime[$k] = array();
@@ -258,7 +259,7 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
     $toReturn['maxIndex'] = $maxLoadIndex;
     $toReturn['r2'] = $r2;
     $toReturn['firstCycle'] = $firstCycle;
-  //  $toReturn['secondCycle'] = $secondCycle;
+    $toReturn['secondCycle'] = [];
     $toReturn['maxLoadVals'] = $maxLoadVals;
     $toReturn['fenergy'] = $fenergy;
     $toReturn['coeff'] = $coeff;
@@ -266,6 +267,7 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
     $toReturn['lims'] = $_SESSION['LIMS'];
     $toReturn['top'] = $_SESSION['top'];
     $toReturn['repetitions'] = $_POST['numofspec'];
+    $toReturn['filename'] = $_FILES['rawData']['name'];
 
 
     returnData($toReturn);
@@ -348,7 +350,7 @@ function getCSV($path)
     }
 
     //Write results to file
-    $file2 = fopen("361.txt", "w");
+    $file2 = fopen("seeCSV.txt", "w");
     for ($i = 0; $i < count($lineData); $i++) {
         # code...
         for ($j = 0; $j < count($lineData[$i]); $j++) {
@@ -364,3 +366,4 @@ function getCSV($path)
     return $lineData;
 
 }
+?>

@@ -67,10 +67,10 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <a target="_blank" href="http://ctis.utep.edu">
-          <img src="img/ctis_transparent_white_2017.png" style="height: max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
+          <img src="img/ctis_transparent_white_2017.png" style=" max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
         </a>
         <a target="_blank" href="http://txdot.gov">
-          <img src="img/txdotnewlogo.png" style="height: max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
+          <img src="img/txdotnewlogo.png" style="max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
         </a>
         <ul class="nav navbar-nav">
           <li>
@@ -206,6 +206,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
             <table id="results" class="table table-striped table-bordered">
               <thead>
                 <th>#</th>
+                <th>File</th>
                 <th>LIMS</th>
                 <!-- <th>Case</th> -->
                 <!-- <th>Specimen</th> -->
@@ -228,6 +229,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
                     }
 
                     echo '<tr>
+                    <td>' . $_SESSION['filename'] . '</td>
                     <td>' . $_SESSION['LIMS'] . '</td>
                     <td>' . round($maxLoadVals[$i - 1], 3) . '</td>
                     <td>' . round($fenergy[$i - 1], 3) . '</td>
@@ -359,8 +361,6 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
     $("#otForm").on("submit", function(e) {
 
       var data = new FormData($('form')[0]);
-      let form_data = $('form')[0];
-      console.log(form_data);
       data.append('submit', true);
 
       e.preventDefault();
@@ -386,6 +386,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
           for (var i = 0; i < data.repetitions; i++) {
             $('#results').children('tbody').append('<tr>\
                                                   <td>' + results_table_counter + '</td>\
+                                                  <td>' + data.filename + '</td>\
                                                   <td>' + data.lims + '</td>\
                                                   <td>' + ((data.maxLoadVals[i] * 100) / 100).toFixed(3) + '</td>\
                                                   <td>' + ((data.fenergy[i] * 100) / 100).toFixed(3) + '</td>\
