@@ -179,7 +179,7 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
 
     $csv = Array();
     $csv = getCSV($_SESSION['rawfile']);
-    // return;
+ 
     $k = 0;
     $disptime[$k] = array();
     
@@ -187,6 +187,7 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
     $initial_displace = convert($csv[$i][$_Displacement], "mm", "in");
     $length = sizeof($csv);
     $maxLoadIndex = 0;
+
     while ($i < $length -1) { //($i < $length -1)
         $cycle = $csv[$i][$_CycleNum];
         if (!isset($maxLoads[$cycle - 1])) {
@@ -211,13 +212,6 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
     //$maxLoadVals[] = $csv[$maxLoadIndex][5];
     $maxLoadVals[] = convert($csv[$maxLoadIndex][$_Load], "kN", "lbf");
 
-
-    // $temp_disp = convert($temp_arr[2]);
-    // for ($i = 15; $i < sizeof($logfile) - 1; $i++) {
-    //     $temp_arr = explode('	', $logfile[$i][0]);
-    //     $disptime[$k][$i - 15] = array(stamp2sec($temp_arr[1]) - $temp_time, convert(preg_replace('/\s+/', '', $temp_arr[2])));
-    // }
-
     //formula for normalized (currLoad / firstLoad)
     for ($i = 0; $i < sizeof($maxLoads); $i++) {
         $normLoads[$k][] = $maxLoads[$i] / $maxLoads[0];
@@ -232,8 +226,8 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
             $valbot += log($j + 1) * log($j + 1);
         }
     }
-
     $coeff[] = abs($valtop / $valbot);
+
     //code for r squared
     $valtop = 0;
     $valbot = 0;
@@ -242,25 +236,26 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
         $valtop += ($normLoads[$k][$j] - pow($j + 1, -$coeff[$k])) * ($normLoads[$k][$j] - pow($j + 1, -$coeff[$k])); //(yi - yreal)^2
         $valbot += ($normLoads[$k][$j]) * ($normLoads[$k][$j]);
     }
-
-
-    //$r2[] = 0.99;
     $r2[] = 1 - $valtop / $valbot;
+
     //code to calculate the area
-    $area[] = 0;
+    $area = 0;
     //TODO make the "-21" or "40" not static should be offest deppends on each type of machine
     for ($i = 1; $i <= ($maxLoadIndex); $i++) {
-        $area[$k] += (($firstCycle[$k][$i - 1][1] + $firstCycle[$k][$i][1]) * abs($firstCycle[$k][$i][0] - $firstCycle[$k][$i - 1][0])) / 2;
+        $area += (($firstCycle[$k][$i - 1][1] + $firstCycle[$k][$i][1]) * abs($firstCycle[$k][$i][0] - $firstCycle[$k][$i - 1][0])) / 2;
     }
-    //echo $area[$k];
-    $fenergy[] = $area[$k] / ($_SESSION['thickness'] * $_SESSION['width']);
+    //echo $area;
+    $fenergy[] = $area / ($_SESSION['thickness'] * $_SESSION['width']);
 
     // Store results
     $toReturn['maxIndex'] = $maxLoadIndex;
+    $toReturn['initialDisplace'] = $initial_displace;
+    $toReturn['area'] = $area;
     $toReturn['r2'] = $r2;
     $toReturn['firstCycle'] = $firstCycle;
     $toReturn['secondCycle'] = [];
     $toReturn['maxLoadVals'] = $maxLoadVals;
+    $toReturn['maxLoads'] = $maxLoads;
     $toReturn['fenergy'] = $fenergy;
     $toReturn['coeff'] = $coeff;
     $toReturn['normLoads'] = $normLoads;
