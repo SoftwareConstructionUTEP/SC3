@@ -59,7 +59,7 @@ $(document).ready(function () {
           $("#start").hide();
 
           // Update Table with results
-          for (var i = 0; i < data.length; i++) {
+          for (var i = 0; i < data.repetitions; i++) {
             $("#results")
               .children("tbody")
               .append(
@@ -83,11 +83,11 @@ $(document).ready(function () {
                   ((data.coeff * 100) / 100).toFixed(3) +
                   "</td>\
                                                     <td>" +
-                  data.normLoads.length - 2 +
+                  data.normLoads[i].length +
                   "</td></tr>"
               );
             results_table_counter++;
-            }
+          }
           var norm = data.normLoads;
           var fenergy = data.fenergy;
           var coeff = data.coeff;
