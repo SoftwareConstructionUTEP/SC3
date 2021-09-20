@@ -1,5 +1,5 @@
 rawfiles/*
-config.php
+config*
 toReturn.txt
 seeCSV.txt
 .vscode/
