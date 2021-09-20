@@ -8,6 +8,7 @@ var colors = [
   ["#E83186", "#F071AC"],
 ];
 
+
 $("#LIMScheck").on("change", function () {
   if ($(this).is(":checked")) {
     $(this).val(true);
@@ -40,26 +41,25 @@ $(document).ready(function () {
       cache: false,
       contentType: false,
       processData: false,
-    })
-      .done(function (returned) {
-        console.log("Data Returned:");
-        console.log(returned);
+    }).done(function (returned) {
+      console.log("Data Returned:");
+      console.log(returned);
 
-        /// start foreach
-        var sp = []; // ? What is SP?
-        returned.forEach((data) => {
-          if (data.hasOwnProperty("error")) {
-            alert(data.error);
-          } else {
-            $("#chart").empty();
-            $("#chart2").empty();
-            // $('#chart3_content').empty();
-            $("#chart4").empty();
-            $("#chart_area").show();
-            $("#start").hide();
+      /// start foreach
+      var sp = []; // ? What is SP?
+      returned.forEach((data) => {
+        if (data.hasOwnProperty("error")) {
+          alert(data.error);
+        } else {
+          $("#chart").empty();
+          $("#chart2").empty();
+          // $('#chart3_content').empty();
+          $("#chart4").empty();
+          $("#chart_area").show();
+          $("#start").hide();
 
-            // Update Table with results
-
+          // Update Table with results
+          for (var i = 0; i < data.length; i++) {
             $("#results")
               .children("tbody")
               .append(
@@ -83,132 +83,83 @@ $(document).ready(function () {
                   ((data.coeff * 100) / 100).toFixed(3) +
                   "</td>\
                                                     <td>" +
-                  data.normLoads.length -
-                  2 +
+                  data.normLoads.length - 2 +
                   "</td></tr>"
               );
             results_table_counter++;
+            }
+          var norm = data.normLoads;
+          var fenergy = data.fenergy;
+          var coeff = data.coeff;
 
-            var norm = data.normLoads;
-            var fenergy = data.fenergy;
-            var coeff = data.coeff;
+          //format the data for plots
+          var normLoad = $.map(norm, function (n, i) {
+            //crack propagation
+            var arr = [];
+            arr.push(
+              {
+                data: $.map(n, function (m, j) {
+                  return [[j, m]];
+                }),
+                label: "Raw Data #" + (i + 1),
+              },
+              {
+                data: $.map(n, function (m, j) {
+                  return [[j, Math.pow(j, -coeff)]];
+                }),
+                label: "Calculated Load",
+              }
+            );
+            return arr;
+          });
 
-            //format the data for plots
-            var normLoad = $.map(norm, function (n, i) {
-              //crack propagation
-              var arr = [];
-              arr.push(
-                {
-                  data: $.map(n, function (m, j) {
-                    return [[j, m]];
-                  }),
-                  label: "Raw Data #" + (i + 1),
-                },
-                {
-                  data: $.map(n, function (m, j) {
-                    return [[j, Math.pow(j, -coeff)]];
-                  }),
-                  label: "Calculated Load",
-                }
-              );
-              return arr;
+          var firstAndSecond = [];
+          for (var i = 0; i < data.firstCycle.length; i++) {
+            firstAndSecond.push({
+              data: data.firstCycle[i],
+              label: "First Loop #" + (i + 1),
+              color: colors[i][0],
+            }); // crack initiation
+          }
+          for (var i = 0; i < data.secondCycle.length; i++) {
+            firstAndSecond.push({
+              data: data.secondCycle[i],
+              label: "Second Loop #" + (i + 1),
+              color: colors[i][1],
+            }); // crack initiation
+          }
+
+          var num_spe;
+          for (var i = 0; i < data.length; i++) {
+            sp.push({
+              data: [[data.coeff, data.fenergy]],
+              label: "Specimen #" + (i + 1),
+              color: "black",
+              points: {
+                show: true,
+                radius: 8,
+                fillColor: colors[i][0],
+                symbol: "circle",
+              },
             });
-
-            var firstAndSecond = [];
-            for (var i = 0; i < data.firstCycle.length; i++) {
-              firstAndSecond.push({
-                data: data.firstCycle[i],
-                label: "First Loop #" + (i + 1),
-                color: colors[i][0],
-              }); // crack initiation
-            }
-            for (var i = 0; i < data.secondCycle.length; i++) {
-              firstAndSecond.push({
-                data: data.secondCycle[i],
-                label: "Second Loop #" + (i + 1),
-                color: colors[i][1],
-              }); // crack initiation
-            }
-
-            var num_spe;
-            for (var i = 0; i < data.length; i++) {
-              sp.push({
-                data: [[data.coeff, data.fenergy]],
-                label: "Specimen #" + (i + 1),
-                color: "black",
-                points: {
-                  show: true,
-                  radius: 8,
-                  fillColor: colors[i][0],
-                  symbol: "circle",
-                },
-              });
-              num_spe = i + 1;
-              if (data.hasOwnProperty("disptime")) {
-                var series = [];
-                for (var i = 0; i < data.repetitions; i++) {
-                  series.push({
-                    data: data.disptime[i],
-                    color: colors[i][0],
-                    label: "Displacement #" + (i + 1),
-                  });
-                }
-                //console.log(series);
-                $.plot($("#chart4"), series, {
-                  yaxis: {
-                    tickDecimals: 2,
-                  },
-                  xaxes: [
-                    {
-                      max: 100,
-                      min: 0,
-                      font: {
-                        size: 22,
-                        weight: "bold",
-                        color: "black",
-                      },
-                    },
-                  ],
-                  yaxes: [
-                    {
-                      font: {
-                        size: 22,
-                        weight: "bold",
-                        color: "black",
-                      },
-                    },
-                  ],
-
-                  legend: {
-                    position: "se",
-                  },
-                  grid: {
-                    hoverable: true, //IMPORTANT! this is needed for tooltip to work
-                  },
-                  tooltip: true,
+            num_spe = i + 1;
+            if (data.hasOwnProperty("disptime")) {
+              var series = [];
+              for (var i = 0; i < data.repetitions; i++) {
+                series.push({
+                  data: data.disptime[i],
+                  color: colors[i][0],
+                  label: "Displacement #" + (i + 1),
                 });
               }
-
-              //plot the charts
-
-              // CRACK PROPAGATION
-              $.plot("#chart2", normLoad, {
+              //console.log(series);
+              $.plot($("#chart4"), series, {
                 yaxis: {
-                  min: 0,
-                  max: 1.0,
+                  tickDecimals: 2,
                 },
-                yaxes: [
-                  {
-                    font: {
-                      size: 22,
-                      weight: "bold",
-                      color: "black",
-                    },
-                  },
-                ],
                 xaxes: [
                   {
-                    max: 300,
+                    max: 100,
                     min: 0,
                     font: {
                       size: 22,
@@ -217,28 +168,6 @@ $(document).ready(function () {
                     },
                   },
                 ],
-              });
-              var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
-                .text("Number of Cycles")
-                .appendTo($("#chart2"));
-              var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
-                .text("Normalized Load")
-                .appendTo($("#chart2"));
-
-              $.plot("#chart", firstAndSecond, {
-                xaxis: {
-                  min: 0,
-                  max: 0.03,
-                },
-                xaxes: [
-                  {
-                    font: {
-                      size: 22,
-                      weight: "bold",
-                      color: "black",
-                    },
-                  },
-                ],
                 yaxes: [
                   {
                     font: {
@@ -248,147 +177,217 @@ $(document).ready(function () {
                     },
                   },
                 ],
+
                 legend: {
                   position: "se",
                 },
+                grid: {
+                  hoverable: true, //IMPORTANT! this is needed for tooltip to work
+                },
+                tooltip: true,
               });
-              // CRACK INITIATION
-              var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
-                .text("Displacement, in.")
-                .appendTo($("#chart")); //more space between this and graph, use css
-              var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
-                .text("Load (lbs)")
-                .appendTo($("#chart"));
+            }
 
-              // OT INTERACTION PLOT
-              var plot = $.plot(
-                "#chart3_content",
-                [
-                  {
-                    data: sp[0]["data"],
-                    label: "Specimen #" + num_spe,
-                    color: "black",
-                    points: {
-                      show: true,
-                      radius: 8,
-                      fillColor: sp[0]["points"]["fillColor"],
-                      symbol: "circle",
-                    },
-                    xaxis: 1,
-                  },
-                ],
+            //plot the charts
+
+            // CRACK PROPAGATION
+            $.plot("#chart2", normLoad, {
+              yaxis: {
+                min: 0,
+                max: 1.0,
+              },
+              yaxes: [
                 {
-                  xaxes: [
-                    /*{
+                  font: {
+                    size: 22,
+                    weight: "bold",
+                    color: "black",
+                  },
+                },
+              ],
+              xaxes: [
+                {
+                  max: 300,
+                  min: 0,
+                  font: {
+                    size: 22,
+                    weight: "bold",
+                    color: "black",
+                  },
+                },
+              ],
+            });
+            var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
+              .text("Number of Cycles")
+              .appendTo($("#chart2"));
+            var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
+              .text("Normalized Load")
+              .appendTo($("#chart2"));
+
+            $.plot("#chart", firstAndSecond, {
+              xaxis: {
+                min: 0,
+                max: 0.03,
+              },
+              xaxes: [
+                {
+                  font: {
+                    size: 22,
+                    weight: "bold",
+                    color: "black",
+                  },
+                },
+              ],
+              yaxes: [
+                {
+                  font: {
+                    size: 22,
+                    weight: "bold",
+                    color: "black",
+                  },
+                },
+              ],
+              legend: {
+                position: "se",
+              },
+            });
+            // CRACK INITIATION
+            var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
+              .text("Displacement, in.")
+              .appendTo($("#chart")); //more space between this and graph, use css
+            var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
+              .text("Load (lbs)")
+              .appendTo($("#chart"));
+
+            // OT INTERACTION PLOT
+            var plot = $.plot(
+              "#chart3_content",
+              [
+                {
+                  data: sp[0]["data"],
+                  label: "Specimen #" + num_spe,
+                  color: "black",
+                  points: {
+                    show: true,
+                    radius: 8,
+                    fillColor: sp[0]["points"]["fillColor"],
+                    symbol: "circle",
+                  },
+                  xaxis: 1,
+                },
+              ],
+              {
+                xaxes: [
+                  /*{
                         position: "top",
                         max: 100,
                         min: 0,
                         font:{ size:22, weight:"bold", color: 'black'}
                       },*/
+                  {
+                    /*inverseTransform: function (v) { return -v; },*/
+                    position: "bottom",
+                    tickColor: "#000000",
+                    tickLength: 12,
+                    max: 1,
+                    min: 0,
+                    font: {
+                      size: 22,
+                      weight: "bold",
+                      color: "black",
+                    },
+                  },
+                ],
+                yaxes: [
+                  {
+                    min: 0,
+                    max: 6,
+                    tickDecimals: 0,
+                    font: {
+                      size: 22,
+                      weight: "bold",
+                      color: "black",
+                    },
+                  },
+                ],
+                grid: {
+                  markingsStyle: "dashed",
+                  markings: [
                     {
-                      /*inverseTransform: function (v) { return -v; },*/
-                      position: "bottom",
-                      tickColor: "#000000",
-                      tickLength: 12,
-                      max: 1,
-                      min: 0,
-                      font: {
-                        size: 22,
-                        weight: "bold",
-                        color: "black",
+                      xaxis: {
+                        from: 0,
+                        to: 0.5,
                       },
+                      color: "rgb(104, 185, 67)",
+                      lineWidth: 2,
+                    }, //green
+                    //{xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
+                    {
+                      xaxis: {
+                        from: 0.5,
+                        to: 1,
+                      },
+                      color: "rgb(199, 96, 86)",
+                      lineWidth: 2,
+                    }, //red
+                    {
+                      xaxis: {
+                        from: 0.5,
+                        to: 0.5,
+                      },
+                      color: "red",
+                      lineWidth: 5,
+                    }, //vertical line
+                    {
+                      xaxis: {
+                        from: 0,
+                        to: 100,
+                      },
+                      yaxis: {
+                        from: 1,
+                        to: 1,
+                      },
+                      color: "black",
+                      lineWidth: 2,
+                    },
+                    {
+                      xaxis: {
+                        from: 0,
+                        to: 100,
+                      },
+                      yaxis: {
+                        from: 3,
+                        to: 3,
+                      },
+                      color: "black",
+                      lineWidth: 2,
                     },
                   ],
-                  yaxes: [
-                    {
-                      min: 0,
-                      max: 6,
-                      tickDecimals: 0,
-                      font: {
-                        size: 22,
-                        weight: "bold",
-                        color: "black",
-                      },
-                    },
-                  ],
-                  grid: {
-                    markingsStyle: "dashed",
-                    markings: [
-                      {
-                        xaxis: {
-                          from: 0,
-                          to: 0.5,
-                        },
-                        color: "rgb(104, 185, 67)",
-                        lineWidth: 2,
-                      }, //green
-                      //{xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
-                      {
-                        xaxis: {
-                          from: 0.5,
-                          to: 1,
-                        },
-                        color: "rgb(199, 96, 86)",
-                        lineWidth: 2,
-                      }, //red
-                      {
-                        xaxis: {
-                          from: 0.5,
-                          to: 0.5,
-                        },
-                        color: "red",
-                        lineWidth: 5,
-                      }, //vertical line
-                      {
-                        xaxis: {
-                          from: 0,
-                          to: 100,
-                        },
-                        yaxis: {
-                          from: 1,
-                          to: 1,
-                        },
-                        color: "black",
-                        lineWidth: 2,
-                      },
-                      {
-                        xaxis: {
-                          from: 0,
-                          to: 100,
-                        },
-                        yaxis: {
-                          from: 3,
-                          to: 3,
-                        },
-                        color: "black",
-                        lineWidth: 2,
-                      },
-                    ],
-                    /*markingsStyle: 'solid',
+                  /*markingsStyle: 'solid',
                       markings: [
                       {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 5}
                       ]*/
-                  },
-                }
-              );
-              var xaxisBottom = $(
-                "<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>"
-              )
-                .text("Crack Progression Rate")
-                .appendTo($("#chart3_content"));
-              var yaxisLabel = $(
-                "<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>"
-              )
-                .html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ")
-                .appendTo($("#chart3_content"));
-            }
-          } //specimen fill color is hardcoded to 'black'
-        }); // end foreach
-        console.log(sp);
-      })
-      .error((error) => {
-        console.log(error);
-      });
+                },
+              }
+            );
+            var xaxisBottom = $(
+              "<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>"
+            )
+              .text("Crack Progression Rate")
+              .appendTo($("#chart3_content"));
+            var yaxisLabel = $(
+              "<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>"
+            )
+              .html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ")
+              .appendTo($("#chart3_content"));
+          }
+        } //specimen fill color is hardcoded to 'black'
+      }); // end foreach
+      console.log(sp);
+    }).error(error => {
+      console.log(error)
+    })
+
   });
 
   //! ////////////////////////////////////////////////////////////////
