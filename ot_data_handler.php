@@ -302,7 +302,7 @@ function doCooper($fenergy, $filepath, $maxLoads, $disptime, $normLoads, $coeff,
         $toReturn['maxLoads'] = $maxLoads;
         $toReturn['fenergy'] = $fenergy;
         $toReturn['coeff'] = $coeff;
-        $toReturn['normLoads'] = $normLoads;
+        $toReturn['normLoads'] = $normLoads[0];
         $toReturn['lims'] = $_SESSION['LIMS'];
         $toReturn['top'] = $_SESSION['top'];
         $toReturn['repetitions'] = $_POST['numofspec'];
