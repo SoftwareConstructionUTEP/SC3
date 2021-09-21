@@ -51,6 +51,7 @@ $(document).ready(function () {
         if (data.hasOwnProperty("error")) {
           alert(data.error);
         } else {
+          
           $("#chart").empty();
           $("#chart2").empty();
           // $('#chart3_content').empty();
@@ -114,6 +115,7 @@ $(document).ready(function () {
           });
 
           var firstAndSecond = [];
+
           for (var i = 0; i < data.firstCycle.length; i++) {
             firstAndSecond.push({
               data: data.firstCycle[i],
@@ -224,6 +226,8 @@ $(document).ready(function () {
               .text("Normalized Load")
               .appendTo($("#chart2"));
 
+              
+            // CRACK INITIATION
             $.plot("#chart", firstAndSecond, {
               xaxis: {
                 min: 0,
@@ -251,7 +255,7 @@ $(document).ready(function () {
                 position: "se",
               },
             });
-            // CRACK INITIATION
+            
             var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
               .text("Displacement, in.")
               .appendTo($("#chart")); //more space between this and graph, use css
