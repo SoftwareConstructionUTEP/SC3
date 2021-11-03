@@ -66,7 +66,7 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <a target="_blank" href="http://ctis.utep.edu">
+        <a target="_blank" href="https://www.utep.edu/engineering/ctis/">
           <img src="img/ctis_transparent_white_2017.png" style=" max-width: 75px; max-height: 75px; margin-top: 3px;" align="right"> </img>
         </a>
         <a target="_blank" href="http://txdot.gov">
@@ -278,6 +278,8 @@ if(!isset($_SESSION['in']) OR !$_SESSION['in']){
                 <option value="#chart2">Crack Propagation</option>
                 <option value="#chart4">Top LVDT</option>
               </select><br><br>
+             
+             
               <!-- Performance -->
               <div id="chart3" style="height: 600px;">
                 <!--<div id="chart3_prepend">hey</div> <br>-->

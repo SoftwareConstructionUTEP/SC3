@@ -1,13 +1,4 @@
-//global var for colors of lines
-var colors = [
-  ["#000000", "000000"],
-  ["rgb(0, 148, 255)", "rgb(130, 174, 255)"],
-  ["#A1D490", "#B2E6A1"],
-  ["#CD88E3", "#D599E8"],
-  ["#DEA96D", "#FCD2A2"],
-  ["#E83186", "#F071AC"],
-];
-
+// plotting library is called FLOT https://www.flotcharts.org/
 
 $("#LIMScheck").on("change", function () {
   if ($(this).is(":checked")) {
@@ -23,389 +14,37 @@ $("#LIMScheck").on("change", function () {
     $("input").attr("disabled", null);
   }
 });
+//global var for colors of lines
+var colors =  [
+  "#000000",
+  "rgb(0, 148, 255)", 
+  "rgb(130, 174, 255)",
+  "#A1D490", // dark green
+  "#B2E6A1", // green
+  "#CD88E3", // dark purple
+  "#D599E8", // purple
+  "#DEA96D", // dark beige
+  "#FCD2A2", // beige
+  "#E83186", // dark pink
+  "#F071AC", // pink
+  "#0000EE", // blue
+  "#008080", // teal
+  "#00C5CD" // turqoise
+]
 
 $(document).ready(function () {
   var results_table_counter = 1;
   $("#chart_area").hide();
 
-  $("#otForm").on("submit", function (e) {
-    var data = new FormData($("form")[0]);
-    data.append("submit", true);
-
-    e.preventDefault();
-
-    $.ajax({
-      url: $(this).attr("action"),
-      type: "POST",
-      data: data,
-      cache: false,
-      contentType: false,
-      processData: false,
-    }).done(function (returned) {
-      console.log("Data Returned:");
-      console.log(returned);
-
-      /// start foreach
-      var sp = []; // ? What is SP?
-      returned.forEach((data) => {
-        if (data.hasOwnProperty("error")) {
-          alert(data.error);
-        } else {
-          
-          $("#chart").empty();
-          $("#chart2").empty();
-          // $('#chart3_content').empty();
-          $("#chart4").empty();
-          $("#chart_area").show();
-          $("#start").hide();
-
-          // Update Table with results
-          for (var i = 0; i < data.repetitions; i++) {
-            $("#results")
-              .children("tbody")
-              .append(
-                "<tr>\
-                                                    <td>" +
-                  results_table_counter +
-                  "</td>\
-                                                    <td>" +
-                  data.filename +
-                  "</td>\
-                                                    <td>" +
-                  data.lims +
-                  "</td>\
-                                                    <td>" +
-                  ((data.maxLoadVals[i] * 100) / 100).toFixed(3) +
-                  "</td>\
-                                                    <td>" +
-                  ((data.fenergy * 100) / 100).toFixed(3) +
-                  "</td>\
-                                                    <td>" +
-                  ((data.coeff * 100) / 100).toFixed(3) +
-                  "</td>\
-                                                    <td>" +
-                  data.normLoads[i].length +
-                  "</td></tr>"
-              );
-            results_table_counter++;
-          }
-          var norm = data.normLoads;
-          var fenergy = data.fenergy;
-          var coeff = data.coeff;
-
-          //format the data for plots
-          var normLoad = $.map(norm, function (n, i) {
-            //crack propagation
-            var arr = [];
-            arr.push(
-              {
-                data: $.map(n, function (m, j) {
-                  return [[j, m]];
-                }),
-                label: "Raw Data #" + (i + 1),
-              },
-              {
-                data: $.map(n, function (m, j) {
-                  return [[j, Math.pow(j, -coeff)]];
-                }),
-                label: "Calculated Load",
-              }
-            );
-            return arr;
-          });
-
-          var firstAndSecond = [];
-
-          for (var i = 0; i < data.firstCycle.length; i++) {
-            firstAndSecond.push({
-              data: data.firstCycle[i],
-              label: "First Loop #" + (i + 1),
-              color: colors[i][0],
-            }); // crack initiation
-          }
-          for (var i = 0; i < data.secondCycle.length; i++) {
-            firstAndSecond.push({
-              data: data.secondCycle[i],
-              label: "Second Loop #" + (i + 1),
-              color: colors[i][1],
-            }); // crack initiation
-          }
-
-          var num_spe;
-          for (var i = 0; i < data.length; i++) {
-            sp.push({
-              data: [[data.coeff, data.fenergy]],
-              label: "Specimen #" + (i + 1),
-              color: "black",
-              points: {
-                show: true,
-                radius: 8,
-                fillColor: colors[i][0],
-                symbol: "circle",
-              },
-            });
-            num_spe = i + 1;
-            if (data.hasOwnProperty("disptime")) {
-              var series = [];
-              for (var i = 0; i < data.repetitions; i++) {
-                series.push({
-                  data: data.disptime[i],
-                  color: colors[i][0],
-                  label: "Displacement #" + (i + 1),
-                });
-              }
-              //console.log(series);
-              $.plot($("#chart4"), series, {
-                yaxis: {
-                  tickDecimals: 2,
-                },
-                xaxes: [
-                  {
-                    max: 100,
-                    min: 0,
-                    font: {
-                      size: 22,
-                      weight: "bold",
-                      color: "black",
-                    },
-                  },
-                ],
-                yaxes: [
-                  {
-                    font: {
-                      size: 22,
-                      weight: "bold",
-                      color: "black",
-                    },
-                  },
-                ],
-
-                legend: {
-                  position: "se",
-                },
-                grid: {
-                  hoverable: true, //IMPORTANT! this is needed for tooltip to work
-                },
-                tooltip: true,
-              });
-            }
-
-            //plot the charts
-
-            // CRACK PROPAGATION
-            $.plot("#chart2", normLoad, {
-              yaxis: {
-                min: 0,
-                max: 1.0,
-              },
-              yaxes: [
-                {
-                  font: {
-                    size: 22,
-                    weight: "bold",
-                    color: "black",
-                  },
-                },
-              ],
-              xaxes: [
-                {
-                  max: 300,
-                  min: 0,
-                  font: {
-                    size: 22,
-                    weight: "bold",
-                    color: "black",
-                  },
-                },
-              ],
-            });
-            var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
-              .text("Number of Cycles")
-              .appendTo($("#chart2"));
-            var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
-              .text("Normalized Load")
-              .appendTo($("#chart2"));
-
-              
-            // CRACK INITIATION
-            $.plot("#chart", firstAndSecond, {
-              xaxis: {
-                min: 0,
-                max: 0.03,
-              },
-              xaxes: [
-                {
-                  font: {
-                    size: 22,
-                    weight: "bold",
-                    color: "black",
-                  },
-                },
-              ],
-              yaxes: [
-                {
-                  font: {
-                    size: 22,
-                    weight: "bold",
-                    color: "black",
-                  },
-                },
-              ],
-              legend: {
-                position: "se",
-              },
-            });
-            
-            var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
-              .text("Displacement, in.")
-              .appendTo($("#chart")); //more space between this and graph, use css
-            var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
-              .text("Load (lbs)")
-              .appendTo($("#chart"));
-
-            // OT INTERACTION PLOT
-            var plot = $.plot(
-              "#chart3_content",
-              [
-                {
-                  data: sp[0]["data"],
-                  label: "Specimen #" + num_spe,
-                  color: "black",
-                  points: {
-                    show: true,
-                    radius: 8,
-                    fillColor: sp[0]["points"]["fillColor"],
-                    symbol: "circle",
-                  },
-                  xaxis: 1,
-                },
-              ],
-              {
-                xaxes: [
-                  /*{
-                        position: "top",
-                        max: 100,
-                        min: 0,
-                        font:{ size:22, weight:"bold", color: 'black'}
-                      },*/
-                  {
-                    /*inverseTransform: function (v) { return -v; },*/
-                    position: "bottom",
-                    tickColor: "#000000",
-                    tickLength: 12,
-                    max: 1,
-                    min: 0,
-                    font: {
-                      size: 22,
-                      weight: "bold",
-                      color: "black",
-                    },
-                  },
-                ],
-                yaxes: [
-                  {
-                    min: 0,
-                    max: 6,
-                    tickDecimals: 0,
-                    font: {
-                      size: 22,
-                      weight: "bold",
-                      color: "black",
-                    },
-                  },
-                ],
-                grid: {
-                  markingsStyle: "dashed",
-                  markings: [
-                    {
-                      xaxis: {
-                        from: 0,
-                        to: 0.5,
-                      },
-                      color: "rgb(104, 185, 67)",
-                      lineWidth: 2,
-                    }, //green
-                    //{xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
-                    {
-                      xaxis: {
-                        from: 0.5,
-                        to: 1,
-                      },
-                      color: "rgb(199, 96, 86)",
-                      lineWidth: 2,
-                    }, //red
-                    {
-                      xaxis: {
-                        from: 0.5,
-                        to: 0.5,
-                      },
-                      color: "red",
-                      lineWidth: 5,
-                    }, //vertical line
-                    {
-                      xaxis: {
-                        from: 0,
-                        to: 100,
-                      },
-                      yaxis: {
-                        from: 1,
-                        to: 1,
-                      },
-                      color: "black",
-                      lineWidth: 2,
-                    },
-                    {
-                      xaxis: {
-                        from: 0,
-                        to: 100,
-                      },
-                      yaxis: {
-                        from: 3,
-                        to: 3,
-                      },
-                      color: "black",
-                      lineWidth: 2,
-                    },
-                  ],
-                  /*markingsStyle: 'solid',
-                      markings: [
-                      {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 5}
-                      ]*/
-                },
-              }
-            );
-            var xaxisBottom = $(
-              "<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>"
-            )
-              .text("Crack Progression Rate")
-              .appendTo($("#chart3_content"));
-            var yaxisLabel = $(
-              "<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>"
-            )
-              .html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ")
-              .appendTo($("#chart3_content"));
-          }
-        } //specimen fill color is hardcoded to 'black'
-      }); // end foreach
-      console.log(sp);
-    }).error(error => {
-      console.log(error)
-    })
-
-  });
-
-  //! ////////////////////////////////////////////////////////////////
-
   // input - form handling
   $("#logfile").attr("required", false);
   $("#logfile_label").hide();
   $("#logfile").hide();
-
   $("#peaks").attr("required", false);
   $("#peaks_label").hide();
   $("#peaks").hide();
-
   $("#date").val(Date());
+
   $("#device").change(function () {
     temp = $("#device").val();
     if (temp == "AMPT") {
@@ -455,7 +94,6 @@ $(document).ready(function () {
       $("#logfile").show();
     }
   });
-
   //var myCanvas = plot.getCanvas();
   //var image = myCanvas.toDataURL();
   //image = image.replace("image/png","image/octet-stream");
@@ -493,5 +131,350 @@ $(document).ready(function () {
 
       $("#LIMScheck").attr("disabled", false);
     }
+  });
+
+  $("#otForm").on("submit", function (e) {
+
+    var data = new FormData($("form")[0]);
+    data.append("submit", true);
+    e.preventDefault();
+
+    $.ajax({
+      url: $(this).attr("action"),
+      type: "POST",
+      data: data,
+      cache: false,
+      contentType: false,
+      processData: false,
+    }).done(function (data_arr) {
+
+      console.log("Data Returned:");
+      console.log(data_arr);
+
+
+      data_arr.forEach(data => {
+        if (data.hasOwnProperty("error")) {
+          alert(data.error);
+          return
+        }
+      });
+    
+
+        $("#chart").empty();
+        $("#chart2").empty();
+        $("#chart3_content").empty();
+        $("#chart4").empty();
+        $("#chart_area").show();
+        $("#start").hide();
+
+        // optimized for multiple files
+        // populates top table with data - make dynamic - more dynamic
+        for (var i = 0; i < data_arr.length; i++) {
+          $("#results")
+            .children("tbody")
+            .append(
+              "<tr>\
+          <td>" +
+                results_table_counter +
+                "</td>\
+                  <td>" +
+                  data_arr[i].filename +
+                "</td>\
+                  <td>" +
+                  data_arr[i].lims +
+                "</td>\
+                  <td>" +
+                ((data_arr[i].maxLoadVals * 100) / 100).toFixed(3) +
+                "</td>\
+                  <td>" +
+                ((data_arr[i].fenergy * 100) / 100).toFixed(3) +
+                "</td>\
+                  <td>" +
+                ((data_arr[i].coeff * 100) / 100).toFixed(3) +
+                "</td>\
+                  <td>" +
+                (data_arr[i].normLoads[0].length -2 ) +
+                "</td></tr>"
+            );
+          results_table_counter++;
+        }
+
+      
+        var normLoads = [];
+        var firstAndSecond = [];
+        
+        var curr_index = 0;
+        data_arr.forEach(element => {
+
+          var norm = element.normLoads;
+          var fenergy = element.fenergy;
+          var coeff = element.coeff;
+
+          //format the data for plots
+          var normLoad = $.map(norm, function (n, i) {
+            //crack propagation
+            var arr = [];
+            arr.push(
+              {
+                data: $.map(n, function (m, j) {
+                  return [[j, m]];
+                }),
+                label: "Raw Data #" + (curr_index+1),
+              },
+              {
+                data: $.map(n, function (m, j) {
+                  return [[j, Math.pow(j, -coeff)]];
+                }),
+                label: "Calculated Load",
+              }
+            );
+            return arr;
+          });
+
+          normLoad.forEach(dict => {
+            normLoads.push(dict)
+          });
+          curr_index++
+        });
+
+
+
+        // first and second cycle
+        let color_index = 0;
+        data_arr.forEach(data => {
+    
+          // first cycle
+            firstAndSecond.push({
+              data: data.firstCycle.pop(),
+              label: "First Loop #"  + (color_index + 1) ,
+              color: colors[color_index],
+            }); // crack propagation
+
+          color_index = color_index + 1;
+          
+  
+          // // second cycle
+          // for (var i = 0; i < data.secondCycle.length; i++) {
+          //   firstAndSecond.push({
+          //     data: data.secondCycle[i],
+          //     label: "Second Loop #" + (i + 1),
+          //     color: colors[i],
+          //   }); // crack initiation
+          // }
+  
+          
+        });
+
+        var specimen = [];
+        color_index = 0;
+
+        data_arr.forEach(data => {
+
+          let sp_data =  {
+            data: [[data.coeff, data.fenergy]],
+            label: "Specimen #" + (color_index+1),
+            color: colors[color_index],
+            points: {
+              show: true,
+              radius: 8,
+              fillColor: colors[color_index],
+              symbol: "circle",
+            },
+            // xaxis: 1,
+          }
+          color_index++;
+          specimen.push(sp_data)
+        });
+
+ 
+
+        
+        // CRACK PROPAGATION CHART
+        $.plot("#chart2", normLoads, {
+          yaxis: {
+            min: 0,
+            max: 1.0,
+          },
+          yaxes: [
+            {
+              font: {
+                size: 22,
+                weight: "bold",
+                color: "black",
+              },
+            },
+          ],
+          xaxes: [
+            {
+              max: 300,
+              min: 0,
+              font: {
+                size: 22,
+                weight: "bold",
+                color: "black",
+              },
+            },
+          ],
+          grid: {
+            hoverable: true, //IMPORTANT! this is needed for tooltip to work
+            },
+          tooltip: true
+        });
+        var xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
+          .text("Number of Cycles")
+          .appendTo($("#chart2"));
+        var yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
+          .text("Normalized Load")
+          .appendTo($("#chart2"));
+
+          // CRACK INITIATION CHART
+        $.plot("#chart", firstAndSecond, {
+          xaxis: {
+            min: 0,
+            max: 0.03,
+          },
+          xaxes: [
+            {
+              font: {
+                size: 22,
+                weight: "bold",
+                color: "black",
+              },
+            },
+          ],
+          yaxes: [
+            {
+              font: {
+                size: 22,
+                weight: "bold",
+                color: "black",
+              },
+            },
+          ],
+          legend: {
+            position: "se",
+          },
+          grid: {
+            hoverable: true, //IMPORTANT! this is needed for tooltip to work
+            },
+          tooltip: true
+        });
+
+        xaxisLabel = $("<div class='axisLabel xaxisLabel'></div>")
+          .text("Displacement, in.")
+          .appendTo($("#chart")); //more space between this and graph, use css
+
+        yaxisLabel = $("<div class='axisLabel yaxisLabel'></div>")
+          .text("Load (lbs)")
+          .appendTo($("#chart"));
+
+
+
+        // // OT INTERACTION PLOT CHART
+        $.plot("#chart3_content",
+        specimen,
+        {
+          xaxes: [
+            /*{
+                  position: "top",
+                  max: 100,
+                  min: 0,
+                  font:{ size:22, weight:"bold", color: 'black'}
+                },*/
+            {
+              /*inverseTransform: function (v) { return -v; },*/
+              position: "bottom",
+              tickColor: "#000000",
+              tickLength: 12,
+              max: 1,
+              min: 0,
+              font: {
+                size: 22,
+                weight: "bold",
+                color: "black",
+              },
+            },
+          ],
+          yaxes: [
+            {
+              min: 0,
+              max: 6,
+              tickDecimals: 0,
+              font: {
+                size: 22,
+                weight: "bold",
+                color: "black",
+              },
+            },
+          ],
+          grid: {
+            markingsStyle: "dashed",
+            markings: [
+              {
+                xaxis: {
+                  from: 0,
+                  to: 0.5,
+                },
+                color: "rgb(104, 185, 67)",
+                lineWidth: 2,
+              }, //green
+              //{xaxis: {from:  30, to: 70}, color: "rgb(233, 222, 66)", lineWidth: 2},//yellow
+              {
+                xaxis: {
+                  from: 0.5,
+                  to: 1,
+                },
+                color: "rgb(199, 96, 86)",
+                lineWidth: 2,
+              }, //red
+              {
+                xaxis: {
+                  from: 0.5,
+                  to: 0.5,
+                },
+                color: "red",
+                lineWidth: 5,
+              }, //vertical line
+              {
+                xaxis: {
+                  from: 0,
+                  to: 100,
+                },
+                yaxis: {
+                  from: 1,
+                  to: 1,
+                },
+                color: "black",
+                lineWidth: 2,
+              },
+              {
+                xaxis: {
+                  from: 0,
+                  to: 100,
+                },
+                yaxis: {
+                  from: 3,
+                  to: 3,
+                },
+                color: "black",
+                lineWidth: 2,
+              },
+            ],
+            /*markingsStyle: 'solid',
+                markings: [
+                {xaxis: {from: 0, to: 100}, yaxis: {from: 1, to: 1}, color: "black", lineWidth: 5}
+                ]*/
+          },
+        }
+        );
+
+        var xaxisBottom = $(
+          "<div class='axisLabel xaxisBottom' style='font-weight:bold;'></div>"
+        ).text("Crack Progression Rate").appendTo($("#chart3_content"));
+        var yaxisLabel = $(
+          "<div class='axisLabel yaxisLabel' style='font-weight:bold;'></div>"
+        ).html("Critical Fracture Energy, lbs*in/in  <sup>2</sup> ").appendTo($("#chart3_content"));
+      
+    });
   });
 });

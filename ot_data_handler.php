@@ -57,51 +57,51 @@ function save_file_data()
 
 
     // multiple files array
-    $tmp_files = $_FILES["rawData"]["tmp_name"];
-/* EXAMPLE
-    {
-  "name": [
-    "13_09_2020_11_38_53_359.csv",
-    "13_09_2020_14_19_19_360.csv",
-    "14_09_2020_07_31_16_361.csv"
-  ],
-  "type": [
-    "application/vnd.ms-excel",
-    "application/vnd.ms-excel",
-    "application/vnd.ms-excel"
-  ],
-  "tmp_name": [
-    "C:\\Windows\\Temp\\phpD1C9.tmp",
-    "C:\\Windows\\Temp\\phpD42C.tmp",
-    "C:\\Windows\\Temp\\phpD7A7.tmp"
-  ],
-  "error": [
-    0,
-    0,
-    0
-  ],
-  "size": [
-    6917798,
-    9987528,
-    6785298
-  ]
-  }
-*/
+        $tmp_files = $_FILES["rawData"]["tmp_name"];
+    /* EXAMPLE
+        {
+    "name": [
+        "13_09_2020_11_38_53_359.csv",
+        "13_09_2020_14_19_19_360.csv",
+        "14_09_2020_07_31_16_361.csv"
+    ],
+    "type": [
+        "application/vnd.ms-excel",
+        "application/vnd.ms-excel",
+        "application/vnd.ms-excel"
+    ],
+    "tmp_name": [
+        "C:\\Windows\\Temp\\phpD1C9.tmp",
+        "C:\\Windows\\Temp\\phpD42C.tmp",
+        "C:\\Windows\\Temp\\phpD7A7.tmp"
+    ],
+    "error": [
+        0,
+        0,
+        0
+    ],
+    "size": [
+        6917798,
+        9987528,
+        6785298
+    ]
+    }
+    */
 
-    // for each file -> move from temp to directory -> add file path to Session rawfiles 
-    $directory = 'rawfiles';
-    $i = 0;
-    foreach ($tmp_files as $file) {
-        //file name to be saved locally
-        $name = $_FILES['rawData']['name'][$i];
+        // for each file -> move from temp to directory -> add file path to Session rawfiles 
+        $directory = 'rawfiles';
+        $i = 0;
+        foreach ($tmp_files as $file) {
+            //file name to be saved locally
+            $name = $_FILES['rawData']['name'][$i];
 
-        // add path to Session array
-        array_push($_SESSION['rawfiles'],"$directory/$name");
-        
-        // move temp file to local folder
-        move_uploaded_file($file, "$directory/$name");
+            // add path to Session array
+            array_push($_SESSION['rawfiles'],"$directory/$name");
+            
+            // move temp file to local folder
+            move_uploaded_file($file, "$directory/$name");
 
-        $i++;
+            $i++;
     }
 
     
@@ -119,7 +119,8 @@ function doShedworks($filepath, $maxLoadVals, $disptime)
 {
     $k = 0;
     $maxLoadIndex = -1;
-    $csv = array_map('str_getcsv', file($filepath));
+    //$csv = array_map('str_getcsv', file($filepath));
+    $csv = getCSV($filepath);
     $offset = 21;   //number of rows
     $initial_displace = convert($csv[$offset][0]);
     $length = sizeof($csv);
@@ -127,7 +128,8 @@ function doShedworks($filepath, $maxLoadVals, $disptime)
 
     //get the first value of displacement
     if ($_SESSION['top'] === "Yes") {
-        $logfile = array_map('str_getcsv', file($_SESSION['logfile'][$k]));
+        // $logfile = array_map('str_getcsv', file($_SESSION['logfile'][$k]));
+        $logfile = getCSV($_SESSION['logfile'][$k]);
     }
 
     for ($i = $offset; $i < $length; $i++) {
@@ -167,6 +169,61 @@ function doShedworks($filepath, $maxLoadVals, $disptime)
         }
     }
     $toReturn['maxIndex'] = $maxLoadIndex;
+
+    //formula for normalized (currLoad / firstLoad)
+    for ($i = 0; $i < sizeof($maxLoads); $i++) {
+        $normLoads[$k][] = $maxLoads[$i] / $maxLoads[0];
+    }
+
+    //code to calculate the power regression coeficient
+    $valtop = 0;
+    $valbot = 0;
+    for ($j = 0; $j < count($normLoads[$k]); $j++) {
+        if ($normLoads[$k][$j] > 0) {
+            $valtop += log($j + 1) * log(abs($normLoads[$k][$j]));
+            $valbot += log($j + 1) * log($j + 1);
+        }
+    }
+
+    $coeff = abs($valtop / $valbot);
+
+    //code for r squared
+    $valtop = 0;
+    $valbot = 0;
+    for ($j = 0; $j < count($normLoads[$k]); $j++) {
+        $model[$k] = array($j + 1, pow($j + 1, - $coeff));
+        $valtop += ($normLoads[$k][$j] - pow($j + 1, -$coeff )) * ($normLoads[$k][$j] - pow($j + 1, -$coeff)); //(yi - yreal)^2
+        $valbot += ($normLoads[$k][$j]) * ($normLoads[$k][$j]);
+    }
+    $r2 = 1 - $valtop / $valbot;
+
+    //code to calculate the area
+    $area = 0;
+
+    for ($i = 1; $i <= ($maxLoadIndex) - 1; $i++) {
+        $area += (($firstCycle[$k][$i - 1][1] + $firstCycle[$k][$i][1]) * abs($firstCycle[$k][$i][0] - $firstCycle[$k][$i - 1][0])) / 2;
+    }
+
+
+    $fenergy = $area / ($_SESSION['thickness'] * $_SESSION['width']);
+
+    // Store results
+    $toReturn['maxIndex'] = $maxLoadIndex;
+    $toReturn['initialDisplace'] = $initial_displace;
+    $toReturn['area'] = $area;
+    $toReturn['r2'] = $r2;
+    $toReturn['firstCycle'] = $firstCycle;
+    $toReturn['secondCycle'] = [];
+    $toReturn['maxLoadVals'] = $maxLoadVals;
+    $toReturn['maxLoads'] = $maxLoads;
+    $toReturn['fenergy'] = $fenergy;
+    $toReturn['coeff'] = $coeff;
+    $toReturn['normLoads'] = $normLoads;
+    $toReturn['lims'] = $_SESSION['LIMS'];
+    $toReturn['top'] = $_SESSION['top'];
+    $toReturn['repetitions'] = $_POST['numofspec'];
+    $toReturn['filename'] = $_FILES['rawData']['name'][0];
+    returnData([$toReturn]);
 }
 
 function doAMPT($filepath, $firstCycle, $secondCycle, $disptime, $maxLoadVals, $maxLoads)

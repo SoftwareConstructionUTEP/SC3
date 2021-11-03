@@ -3,3 +3,4 @@ config*
 toReturn.txt
 seeCSV.txt
 .vscode/
+js/flot/examples/*
